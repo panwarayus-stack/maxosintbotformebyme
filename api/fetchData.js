@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Missing ?number= parameter" });
   }
 
-  const curlCmd = `curl -s "https://osintx.info/API/aetherdemo.php?key=JONATHAN&type=mobile&term=${number}"`;
+  const curlCmd = `curl -s "https://allapiinone.vercel.app/?key=DEMOKEY&type=mobile&term=${number}"`;
 
   exec(curlCmd, (error, stdout, stderr) => {
     if (error) {
@@ -24,4 +24,5 @@ export default async function handler(req, res) {
     }
   });
 }
+
 
