@@ -11,18 +11,35 @@ export default async function handler(req, res) {
 
   exec(curlCmd, (error, stdout, stderr) => {
     if (error) {
-      res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message });
     } else if (stderr) {
-      res.status(500).json({ error: stderr });
+      return res.status(500).json({ error: stderr });
     } else {
       try {
+        const data = JSON.parse(stdout);
+
+        if (!data.success || !data.result || data.result.length === 0) {
+          return res.status(200).json({ success: false, message: "No data found" });
+        }
+
+        // format result with emojis
+        const formatted = data.result.map(item => ({
+          "📱 Mobile": item.mobile || "-",
+          "👤 Name": item.name || "-",
+          "👨‍👩‍👧 Father": item.father_name || "-",
+          "🏠 Address": item.address || "-",
+          "📞 Alt Mobile": item.alt_mobile || "-",
+          "📶 Circle/ISP": item.circle || "-",
+          "🆔 Aadhar": item.id_number || "-",
+          "✉️ Email": item.email || "-"
+        }));
+
         res.setHeader("Content-Type", "application/json");
-        res.status(200).send(stdout);
+        res.status(200).json({ success: true, result: formatted });
+
       } catch (e) {
-        res.status(500).json({ error: "Invalid JSON" });
+        res.status(500).json({ error: "Invalid JSON from API" });
       }
     }
   });
 }
-
-
