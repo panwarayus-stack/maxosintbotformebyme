@@ -1,104 +1,121 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MR WEIRDOO</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
-      color: #eee;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      transition: background 0.5s;
-    }
-    .container {
-      background: rgba(30,30,30,0.9);
-      padding: 2.5rem;
-      border-radius: 20px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.7);
-      max-width: 500px;
-      text-align: center;
-      transform: scale(0);
-      animation: popin 0.5s forwards;
-    }
-    @keyframes popin {
-      to { transform: scale(1); }
-    }
-    h1 {
-      font-size: 3rem;
-      margin-bottom: 0.5rem;
-      color: #ff6b6b;
-      animation: fadeIn 1s ease-in-out;
-    }
-    p {
-      margin-bottom: 1rem;
-      font-size: 1rem;
-      line-height: 1.5;
-      animation: fadeIn 1.5s ease-in-out;
-    }
-    a {
-      display: inline-block;
-      margin: 0.3rem;
-      padding: 0.5rem 1rem;
-      background: #333;
-      color: #eee;
-      text-decoration: none;
-      border-radius: 8px;
-      transition: 0.3s;
-    }
-    a:hover {
-      background: #ff6b6b;
-      color: #fff;
-      transform: translateY(-3px);
-    }
-    .email {
-      cursor: pointer;
-      background: #222;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      display: inline-block;
-      transition: 0.3s;
-    }
-    .email:hover {
-      background: #ff6b6b;
-      color: #fff;
-      transform: translateY(-2px);
-    }
-    .pfp {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      margin-bottom: 1rem;
-      border: 3px solid #ff6b6b;
-      object-fit: cover;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-      animation: fadeIn 1s ease-in-out;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MR WEIRDOO</title>
+<style>
+  :root{
+    --bg:#1e1e2f;       /* deep background */
+    --card:#2c2c3f;     /* card background */
+    --accent:#ff4d6d;   /* main highlight color */
+    --text:#f0f0f5;     /* main text */
+    --muted:#a0a0b0;    /* secondary text */
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background: linear-gradient(135deg, #1e1e2f, #15152a);
+    color: var(--text);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .card{
+    max-width:600px;
+    background: var(--card);
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+    text-align: center;
+    animation: fadeIn 0.8s ease forwards;
+  }
+
+  @keyframes fadeIn{
+    from {opacity:0; transform: translateY(20px);}
+    to {opacity:1; transform: translateY(0);}
+  }
+
+  h1{
+    font-size: 2.6rem;
+    margin: 0 0 10px;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+
+  p.lead{
+    font-size: 1.2rem;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .email{
+    display:inline-block;
+    background: #3a3a5a;
+    padding: 10px 16px;
+    border-radius: 12px;
+    cursor:pointer;
+    transition: background 0.3s;
+    margin-bottom: 25px;
+  }
+
+  .email:hover{
+    background: var(--accent);
+    color:#fff;
+  }
+
+  nav{
+    margin-top: 20px;
+  }
+
+  nav a{
+    display:inline-block;
+    margin:8px;
+    padding:12px 18px;
+    border-radius:12px;
+    background:#3a3a5a;
+    color: #f0f0f5;
+    text-decoration:none;
+    font-weight:500;
+    transition: 0.3s;
+  }
+
+  nav a:hover{
+    background: var(--accent);
+    color:#fff;
+    transform: translateY(-3px);
+  }
+
+</style>
 </head>
 <body>
-  <div class="container">
-    <!-- Profile picture -->
-    <img src="high-1761317634.jpg" alt="MR WEIRDOO" class="pfp"><h1>MR WEIRDOO</h1>
-<p>I AM WEIRDOO, DOING SOMETHING RELATED TO HACKING, AND FOR FUN.</p>
-<p class="email" onclick="navigator.clipboard.writeText('RTBASS60@GMAIL.COM')">
-  Email: RTBASS60@GMAIL.COM (click to copy)
-</p>
-<div>
-  <a href="https://t.me/IAMMRWEIRDOO" target="_blank">Telegram</a>
-  <a href="https://instagram.com/IAMMRWEIRDOO" target="_blank">Instagram</a>
-  <a href="https://www.youtube.com/@IAMMRWEIRDO" target="_blank">YouTube</a>
-  <a href="/osint" target="_blank">OSINT Tool</a>
-</div>
+  <div class="card">
+    <h1>MR WEIRDOO</h1>
+    <p class="lead">I AM WEIRDOO, DOING SOMETHING RELATED TO HACKING, AND FOR FUN.</p>
 
+    <div class="email" id="email" title="Click to copy">
+      Email: RTBASS60@GMAIL.COM (click to copy)
+    </div>
+
+    <nav>
+      <a href="https://t.me/IAMMRWEIRDOO" target="_blank" rel="noopener">Telegram</a>
+      <a href="https://instagram.com/IAMMRWEIRDOO" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.youtube.com/@IAMMRWEIRDO" target="_blank" rel="noopener">YouTube</a>
+      <a href="/osint" target="_blank" rel="noopener">OSINT Tool</a>
+    </nav>
   </div>
+
+<script>
+  const emailEl = document.getElementById('email');
+  emailEl.addEventListener('click', () => {
+    navigator.clipboard.writeText('RTBASS60@GMAIL.COM')
+      .then(() => alert('Email copied!'));
+  });
+</script>
 </body>
 </html>
