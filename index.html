@@ -10,30 +10,18 @@
     --bg2:#07120a;
     --neon:#00ff7f;
     --muted:#6f8a6f;
-    --card:#06110b;
     --accent:#00c174;
-    --glass: rgba(0,0,0,0.35);
+    --card:#06110b;
   }
   *{box-sizing:border-box}
   html,body{height:100%;margin:0;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#bfffcf;overflow:hidden}
-  .matrix{position:fixed;inset:0;z-index:0;pointer-events:none;background:
-    radial-gradient(ellipse at center, rgba(0,255,127,0.03) 0%, transparent 40%),
-    linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.6));}
-  .drops{position:absolute;inset:0;opacity:0.08}
-  .drop{position:absolute;left:50%;top:0;transform:translateX(-50%);width:1px;height:100vh;background:linear-gradient(to bottom, rgba(0,255,127,0) 0%, rgba(0,255,127,0.15) 20%, rgba(0,255,127,0.6) 60%, rgba(0,255,127,0) 100%);animation:fall calc(var(--i) * 0.8s) linear infinite}
-  @keyframes fall{0%{transform:translateY(-100vh) translateX(var(--x,0))}100%{transform:translateY(100vh) translateX(var(--x,0))}}
-
   .wrap{position:relative;z-index:2;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:30px}
   .card{
     width:100%;max-width:1050px;background:linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.35));border:1px solid rgba(0,255,127,0.06);backdrop-filter: blur(4px);box-shadow:0 20px 80px rgba(0,0,0,0.7);border-radius:12px;padding:22px;display:grid;grid-template-columns:1fr 360px;gap:18px;color:#dfffe0;
   }
 
-  /* Terminal (left) */
-  .term{
-    background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(6,17,11,0.18));
-    border-radius:8px;padding:14px;height:520px;overflow:hidden;border:1px solid rgba(0,255,127,0.06);
-    box-shadow: inset 0 0 40px rgba(0,255,127,0.02); position:relative;display:flex;flex-direction:column;
-  }
+  /* Terminal */
+  .term{background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(6,17,11,0.18));border-radius:8px;padding:14px;height:520px;overflow:hidden;border:1px solid rgba(0,255,127,0.06);box-shadow: inset 0 0 40px rgba(0,255,127,0.02); display:flex;flex-direction:column;}
   .term .title{display:flex;gap:10px;align-items:center;margin-bottom:8px}
   .dot{width:10px;height:10px;border-radius:50%;background:rgba(0,255,127,0.25);box-shadow:0 0 8px rgba(0,255,127,0.45) inset}
   .term .meta{color:var(--muted);font-size:13px}
@@ -44,19 +32,12 @@
   .type{display:inline-block;border-right:2px solid var(--neon);padding-right:6px;animation:blink 1s steps(2,start) infinite}
   @keyframes blink{50%{border-color:transparent}}
 
-  /* scanning */
-  .scan-line{color:#8ffff2;font-size:13px;opacity:0;transform:translateX(-12px);transition:opacity .35s, transform .35s}
-  .scan-line.show{opacity:1;transform:translateX(0)}
-
-  /* input area */
   .inputBar{display:flex;gap:8px;margin-top:10px;align-items:center}
   .prompt{color:var(--muted);font-size:13px}
-  input.cmdInput{
-    flex:1;padding:10px 12px;border-radius:8px;border:1px solid rgba(0,255,127,0.06);background:rgba(0,0,0,0.4);color:var(--neon);outline:none;font-family:inherit;font-size:14px;
-  }
+  input.cmdInput{flex:1;padding:10px 12px;border-radius:8px;border:1px solid rgba(0,255,127,0.06);background:rgba(0,0,0,0.4);color:var(--neon);outline:none;font-family:inherit;font-size:14px;}
   button.exec{padding:10px 12px;border-radius:8px;background:var(--neon);color:#021005;border:none;cursor:pointer;font-weight:700}
 
-  /* right side (profile + actions) */
+  /* Right side */
   .side{display:flex;flex-direction:column;gap:12px;align-items:stretch;justify-content:flex-start}
   .profile{padding:16px;border-radius:8px;background:linear-gradient(180deg,rgba(0,0,0,0.18),rgba(0,0,0,0.06));border:1px solid rgba(0,255,127,0.04)}
   .name{font-size:20px;color:var(--accent);font-weight:700;letter-spacing:1px}
@@ -66,39 +47,17 @@
   .links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
   .links a{flex:1 1 calc(50% - 8px);text-align:center;padding:10px;border-radius:8px;background:rgba(0,255,127,0.03);color:#caffd1;text-decoration:none;border:1px solid rgba(0,255,127,0.04);font-weight:700;}
   .links a:hover{background:var(--accent);color:#021005;transform:translateY(-4px)}
-  .cta{display:flex;gap:10px;margin-top:8px}
-  .cta a{flex:1;padding:10px;border-radius:10px;text-decoration:none;text-align:center;background:linear-gradient(90deg,var(--neon),var(--accent));color:#021005;font-weight:800}
   .meta{margin-top:auto;padding-top:8px;color:var(--muted);font-size:12px;text-align:center}
-
-  /* help / history toggles */
-  .controls{display:flex;gap:8px;margin-top:10px}
-  .controls button{padding:8px;border-radius:8px;background:#0b1910;border:1px solid rgba(0,255,127,0.04);color:#bfffdc;cursor:pointer}
-
-  @media(max-width:980px){.card{grid-template-columns:1fr;}.term{height:420px}}
 </style>
 </head>
 <body>
-  <div class="matrix" aria-hidden="true">
-    <div class="drops" aria-hidden="true">
-      <div class="drop" style="--i:8;--x:-40vw;left:8%"></div>
-      <div class="drop" style="--i:10;--x:20vw;left:20%"></div>
-      <div class="drop" style="--i:12;--x:-12vw;left:32%"></div>
-      <div class="drop" style="--i:9;--x:6vw;left:44%"></div>
-      <div class="drop" style="--i:11;--x:-8vw;left:56%"></div>
-      <div class="drop" style="--i:13;--x:10vw;left:68%"></div>
-      <div class="drop" style="--i:7;--x:-6vw;left:80%"></div>
-      <div class="drop" style="--i:14;--x:4vw;left:92%"></div>
-    </div>
-  </div>
-
-  <div class="wrap">
-    <div class="card" role="main">
-      <!-- LEFT: Terminal -->
-      <div class="term" role="region" aria-label="terminal">
-        <div class="title"><div class="dot" aria-hidden="true"></div><div class="meta">mrweirdo@terminal</div></div>
-
-        <div class="viewport" id="viewport" tabindex="0" aria-live="polite">
-          <pre id="log">
+<div class="wrap">
+  <div class="card" role="main">
+    <!-- Terminal -->
+    <div class="term" role="region" aria-label="terminal">
+      <div class="title"><div class="dot"></div><div class="meta">mrweirdo@terminal</div></div>
+      <div class="viewport" id="viewport" tabindex="0" aria-live="polite">
+        <pre id="log">
 <span class="muted">[boot]</span> initializing system...
 <span class="muted">[boot]</span> establishing secure channel... <span class="cmd">OK</span>
 <span class="muted">[net]</span> connecting to onion-net... <span class="cmd">online</span>
@@ -107,284 +66,99 @@
 
 <span class="muted">[run]</span> welcome back <span class="cmd">MR WEIRDOO</span>
 
-&gt; <span id="typed" class="type">scanning port</span>
-
-<!-- dynamic scanning lines go below -->
-          </pre>
-        </div>
-
-        <div class="inputBar" aria-hidden="false">
-          <div class="prompt">&gt;</div>
-          <input id="cmdInput" class="cmdInput" autocomplete="off" placeholder="Type command (help, scan, osint, history, clear) and press Enter">
-          <button id="execBtn" class="exec" title="Run command">RUN</button>
-        </div>
+&gt; <span id="typed" class="type">scanning ports...</span>
+        </pre>
       </div>
 
-      <!-- RIGHT: Profile / Actions -->
-      <aside class="side" aria-label="profile and actions">
-        <div class="profile" role="article">
-          <div class="name">MR WEIRDOO</div>
-          <div class="desc">I AM WEIRDOO, DOING SOMETHING RELATED TO HACKING, AND FOR FUN.</div>
-
-          <div class="emailBtn" id="copyEmail" title="Click to copy email">
-            <div style="font-weight:700;color:var(--neon);">Email</div>
-            <div style="margin-left:auto;color:var(--muted);">RTBASS60@GMAIL.COM</div>
-          </div>
-
-          <div class="links" role="navigation" aria-label="social links">
-            <a href="https://t.me/IAMMRWEIRDOO" target="_blank" rel="noopener">TELEGRAM</a>
-            <a href="https://instagram.com/IAMMRWEIRDOO" target="_blank" rel="noopener">INSTAGRAM</a>
-            <a href="https://www.youtube.com/@IAMMRWEIRDO" target="_blank" rel="noopener">YOUTUBE</a>
-            <a id="tryOsint" href="/osint.html" target="_self" rel="noopener">TRY OSINT TOOL</a>
-          </div>
-
-          <div class="controls" role="group" aria-label="controls">
-            <button id="helpBtn">Help</button>
-            <button id="toggleHistory">Toggle History</button>
-            <button id="clearBtn">Clear</button>
-          </div>
-        </div>
-
-        <div class="meta">system: secure • theme: neon-term • hosted on Vercel</div>
-      </aside>
+      <div class="inputBar">
+        <div class="prompt">&gt;</div>
+        <input id="cmdInput" class="cmdInput" autocomplete="off" placeholder="Type command (help, scan, osint, history, clear)">
+        <button id="execBtn" class="exec">RUN</button>
+      </div>
     </div>
+
+    <!-- Profile -->
+    <aside class="side" aria-label="profile and actions">
+      <div class="profile">
+        <div class="name">MR WEIRDOO</div>
+        <div class="desc">I AM WEIRDOO, DOING SOMETHING RELATED TO HACKING, AND FOR FUN.</div>
+        <div class="emailBtn" id="copyEmail">Email: RTBASS60@GMAIL.COM (click to copy)</div>
+        <div class="links">
+          <a href="https://t.me/IAMMRWEIRDOO" target="_blank">TELEGRAM</a>
+          <a href="https://instagram.com/IAMMRWEIRDOO" target="_blank">INSTAGRAM</a>
+          <a href="https://www.youtube.com/@IAMMRWEIRDO" target="_blank">YOUTUBE</a>
+          <a id="tryOsint" href="/osint.html" target="_self">TRY OSINT TOOL</a>
+        </div>
+      </div>
+      <div class="meta">system: secure • theme: neon-term • hosted on Vercel</div>
+    </aside>
   </div>
+</div>
 
 <script>
-/* ---------- Utility helpers ---------- */
+/* ---------- Helpers ---------- */
 const viewport = document.getElementById('viewport');
 const log = document.getElementById('log');
 const input = document.getElementById('cmdInput');
 const execBtn = document.getElementById('execBtn');
 const copyEmail = document.getElementById('copyEmail');
-const helpBtn = document.getElementById('helpBtn');
-const toggleHistoryBtn = document.getElementById('toggleHistory');
-const clearBtn = document.getElementById('clearBtn');
 const tryOsint = document.getElementById('tryOsint');
 
-function appendLine(html, options = {}) {
-  // options: {persistent: true/false} if persistent keeps in history (no auto-remove)
-  const node = document.createElement('div');
+function safeText(t){ return t.replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function appendLine(html){
+  const node = document.createElement("div");
   node.innerHTML = html;
-  if(!options.persistent){
-    node.className = 'scan-line';
-    // allow css transition then show
-    setTimeout(()=> node.classList.add('show'), 20);
-    // remove after fade (if history mode off)
-    if(!HISTORY_MODE){
-      setTimeout(()=>{ node.classList.remove('show'); setTimeout(()=> node.remove(), 900); }, 4200 + Math.random()*1600);
-    }
-  }
   log.appendChild(node);
   viewport.scrollTop = viewport.scrollHeight;
   return node;
 }
 
-function safeText(t){ return t.replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+/* ---------- Dynamic scan ---------- */
+const statuses = ["open","closed","filtered","unreachable","reset"];
+const ports = [22, 80, 443, 445, 3389, 3306, 8080];
+const ipBlocks = ["10.0","192.168","172.16","8.8","104.21","45.33"];
 
-/* ---------- Typing effect (prompt) ---------- */
-const phrases = [
-  "scanning port",
-  "scanning port 22...",
-  "scanning port 80...",
-  "scanning host 192.168.1.1...",
-  "probing service banners...",
-  "searching for open SMB...",
-  "checking tls fingerprint..."
-];
-let pi = 0, ppos = 0, pfwd = true;
-const typedEl = document.getElementById('typed');
+function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function randomIP(){ const block = pick(ipBlocks); return block+"."+rand(0,255)+"."+rand(1,254); }
+function createScanLine(){
+  if(Math.random()<0.5) return `[net] handshake with ${randomIP()} - ${pick(statuses)}`;
+  return `[scan] host ${randomIP()} - port ${pick(ports)}/tcp - ${pick(statuses)}`;
+}
 
+function appendScanLine(){ appendLine('<span class="muted">[auto]</span> ' + safeText(createScanLine())); }
+
+/* Continuous scanning every 800-1500ms */
+setInterval(appendScanLine, 800 + Math.random()*700);
+
+/* ---------- Typing effect ---------- */
+const phrases=["scanning ports...","probing hosts...","initializing modules..."];
+let pi=0,pos=0,forward=true;
+const typedEl=document.getElementById('typed');
 function typeTick(){
   const phrase = phrases[pi];
-  if(pfwd){
-    ppos++;
-    typedEl.textContent = phrase.slice(0,ppos);
-    if(ppos === phrase.length){ pfwd = false; setTimeout(typeTick,900); return; }
-    setTimeout(typeTick,40 + Math.random()*60);
-  } else {
-    ppos--;
-    typedEl.textContent = phrase.slice(0,ppos);
-    if(ppos === 0){ pfwd = true; pi = (pi+1) % phrases.length; setTimeout(typeTick,200); return; }
-    setTimeout(typeTick,20 + Math.random()*40);
-  }
+  if(forward){ pos++; typedEl.textContent=phrase.slice(0,pos); if(pos===phrase.length){forward=false; setTimeout(typeTick,900); return;} setTimeout(typeTick,40+Math.random()*60);}
+  else{ pos--; typedEl.textContent=phrase.slice(0,pos); if(pos===0){forward=true; pi=(pi+1)%phrases.length; setTimeout(typeTick,200); return;} setTimeout(typeTick,20+Math.random()*40);}
 }
 typeTick();
 
-/* ---------- Scanning feed ---------- */
-const scanTemplates = [
-  "[scan] host 10.0.{r}.1 - port {p}/tcp - {s}",
-  "[scan] host 172.16.{r}.5 - port {p}/tcp - {s}",
-  "[scan] host 192.168.{r}.{x} - port {p}/tcp - {s}",
-  "[net] handshake with {ip} - {s}",
-  "[svc] banner: {svc} - {s}",
-  "[probe] {ip} - tls:{tls} - {s}"
-];
-const services = ["ssh","http","https","ftp","smtp","rdp","mysql","mssql","smb","dns"];
-const statuses = ["open","closed","filtered","host down","unreachable","reset"];
-const tlsList = ["valid","self-signed","expired","weak-cipher"];
-const ips = ["10.0.4.12","172.16.8.9","192.168.0.25","8.8.8.8","104.21.30.84","45.33.32.156"];
-
-function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a }
-function pick(arr){ return arr[Math.floor(Math.random()*arr.length)] }
-
-function createScanLine(){
-  const tmpl = pick(scanTemplates);
-  const line = tmpl
-    .replace("{r}", rand(1,254))
-    .replace("{p}", pick([22,80,443,3306,3389,53,445,8080]))
-    .replace("{s}", pick(statuses))
-    .replace("{svc}", pick(services))
-    .replace("{ip}", pick(ips))
-    .replace("{tls}", pick(tlsList))
-    .replace("{x}", rand(2,250));
-  return line;
-}
-
-/* Ensure certain messages show every minute (specific fake messages) */
-const guaranteedMessages = [
-  "[guard] monitored host 192.168.1.1 - ssh: open - fingerprint: SHA256:FAKEEXAMPLE",
-  "[svc] banner: ssh - OpenSSH_8.0p1 - simulated",
-  "[net] gateway 192.168.1.254 - latency 2ms"
-];
-
-let HISTORY_MODE = false; // toggle for persistent history
-
-function appendGuaranteed(){
-  guaranteedMessages.forEach(msg => appendLine('<span class="muted">[auto]</span> ' + safeText(msg), {persistent:true}));
-}
-
-/* append random lines continuously */
-function appendScan(){
-  appendLine('<span class="muted">[scan]</span> ' + safeText(createScanLine()));
-}
-let scanInterval;
-function startScanner(){
-  // variable interval to feel organic
-  scanInterval = setInterval(appendScan, 700 + Math.random()*900);
-  // also append guaranteed at intervals
-  setInterval(appendGuaranteed, 60000);
-}
-startScanner();
-
-/* ---------- input / commands ---------- */
+/* ---------- Commands ---------- */
 function runCommand(raw){
-  const cmd = raw.trim();
+  const cmd=raw.trim();
   if(!cmd) return;
-  appendLine('<span class="muted">[user]</span> &gt; ' + '<span class="cmd">' + safeText(cmd) + '</span>', {persistent:true});
-  const parts = cmd.split(/\s+/);
-  const c = parts[0].toLowerCase();
-
-  if(c === 'help'){
-    printHelp();
-    return;
-  }
-  if(c === 'scan'){
-    // simulate a quick scan burst
-    for(let k=0;k<6;k++){
-      setTimeout(()=> appendLine('<span class="muted">[scan]</span> ' + safeText(createScanLine())), k*250);
-    }
-    return;
-  }
-  if(c === 'osint' || c === 'open' && parts[1] === 'osint'){
-    appendLine('<span class="muted">[action]</span> redirecting to OSINT tool (/osint.html)...', {persistent:true});
-    setTimeout(()=> window.location.href = '/osint.html', 700);
-    return;
-  }
-  if(c === 'history'){
-    HISTORY_MODE = true;
-    appendLine('<span class="muted">[info]</span> history mode: ON (lines will persist)', {persistent:true});
-    return;
-  }
-  if(c === 'clear'){
-    // clear only ephemeral scan lines; keep persistent ones
-    const children = Array.from(log.children);
-    children.forEach(node=>{
-      if(node.classList && node.classList.contains('scan-line')){
-        node.remove();
-      }
-    });
-    appendLine('<span class="muted">[info]</span> cleared ephemeral lines', {persistent:true});
-    return;
-  }
-  if(c === 'helpme'){
-    printHelp(true);
-    return;
-  }
-  // unknown
-  appendLine('<span class="muted">[error]</span> command not found: ' + '<span class="cmd">' + safeText(cmd) + '</span>', {persistent:true});
+  appendLine('<span class="muted">[user]</span> &gt; <span class="cmd">'+safeText(cmd)+'</span>');
+  const c=cmd.toLowerCase();
+  if(c==='help'){ appendLine('<span class="muted">[info]</span> commands: help, scan, osint, history, clear'); return;}
+  if(c==='scan'){ for(let k=0;k<6;k++) setTimeout(()=>appendScanLine(), k*250); return;}
+  if(c==='osint'){ appendLine('<span class="muted">[action]</span> redirecting to OSINT tool...'); setTimeout(()=>window.location.href='/osint.html',700); return;}
+  if(c==='history'){ appendLine('<span class="muted">[info]</span> history mode ON'); return;}
+  if(c==='clear'){ Array.from(log.children).forEach(n=>{ if(n.classList && n.classList.contains('scan-line')) n.remove(); }); appendLine('<span class="muted">[info]</span> cleared ephemeral lines'); return;}
+  appendLine('<span class="muted">[error]</span> command not found: <span class="cmd">'+safeText(cmd)+'</span>');
 }
+execBtn.addEventListener('click',()=>{ runCommand(input.value); input.value=''; input.focus(); });
+input.addEventListener('keydown',e=>{ if(e.key==='Enter'){ runCommand(input.value); input.value=''; e.preventDefault(); } });
 
-function printHelp(verbose=false){
-  const lines = [
-    '<span class="muted">Available commands:</span>',
-    "<span class='cmd'>help</span> — show this help",
-    "<span class='cmd'>scan</span> — quick scan burst",
-    "<span class='cmd'>osint</span> — open OSINT tool (redirect)",
-    "<span class='cmd'>history</span> — enable persistent history",
-    "<span class='cmd'>clear</span> — clear ephemeral outputs",
-    "<span class='cmd'>helpme</span> — verbose help"
-  ];
-  lines.forEach(l => appendLine(l, {persistent:true}));
-  if(verbose){
-    appendLine('<span class="muted">Verbose:</span> This terminal is cosmetic. It does NOT perform real scanning. Use the OSINT tool for legitimate lookups.', {persistent:true});
-  }
-}
-
-/* wire input */
-execBtn.addEventListener('click', ()=>{ runCommand(input.value); input.value=''; input.focus(); });
-input.addEventListener('keydown', (e)=>{ if(e.key === 'Enter'){ runCommand(input.value); input.value=''; e.preventDefault(); } });
-
-/* help button */
-helpBtn.addEventListener('click', ()=> printHelp());
-
-/* toggle history button */
-toggleHistoryBtn.addEventListener('click', ()=>{
-  HISTORY_MODE = !HISTORY_MODE;
-  appendLine('<span class="muted">[info]</span> history mode: ' + (HISTORY_MODE ? 'ON' : 'OFF'), {persistent:true});
-});
-
-/* clear button */
-clearBtn.addEventListener('click', ()=>{
-  const children = Array.from(log.children);
-  children.forEach(node=>{
-    if(node.classList && node.classList.contains('scan-line')){
-      node.remove();
-    }
-  });
-  appendLine('<span class="muted">[info]</span> cleared ephemeral lines', {persistent:true});
-});
-
-/* copy email */
-copyEmail.addEventListener('click', ()=>{
-  navigator.clipboard.writeText('RTBASS60@GMAIL.COM').then(()=> {
-    appendLine('<span class="muted">[info]</span> Email copied to clipboard', {persistent:true});
-  }).catch(()=> appendLine('<span class="muted">[error]</span> copy failed', {persistent:true}));
-});
-
-/* clickable Try OSINT link - also focus input with 'osint' if keyboard used */
-tryOsint.addEventListener('click', (e)=>{
-  // standard navigation; we keep it as link. but also show message in terminal:
-  appendLine('<span class="muted">[action]</span> opening OSINT tool...', {persistent:true});
-  // navigation will occur due to href
-});
-
-/* Accessibility: focus input on viewport click */
-viewport.addEventListener('click', ()=> input.focus());
-
-/* initial guaranteed messages */
-appendGuaranteed();
-
-/* keep viewport scrolled down */
-setInterval(()=>{ viewport.scrollTop = viewport.scrollHeight; }, 600);
-
-/* expose a few sample commands to user on load */
-setTimeout(()=> printHelp(false), 1200);
-</script>
-</body>
-</html>
-```0le.transition = 'opacity 600ms'; setTimeout(()=> node.remove(),900) }, 2200);
-}
+copyEmail.addEventListener('click',()=>{ navigator.clipboard.writeText('RTBASS60@GMAIL.COM').then(()=>appendLine('<span class="muted">[info]</span> Email copied to clipboard')); });
 </script>
 </body>
 </html>
