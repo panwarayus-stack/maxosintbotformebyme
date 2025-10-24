@@ -5,59 +5,63 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>MR WEIRDOO — Terminal</title>
 <style>
-  :root{
-    --bg1:#020204;
-    --bg2:#07120a;
-    --neon:#00ff7f;
-    --muted:#6f8a6f;
-    --accent:#00c174;
-    --card:#06110b;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%;margin:0;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#bfffcf;overflow:auto}
-  .wrap{position:relative;z-index:2;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:30px}
-  .card{
-    width:100%;max-width:1050px;background:linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.35));border:1px solid rgba(0,255,127,0.06);backdrop-filter: blur(4px);box-shadow:0 20px 80px rgba(0,0,0,0.7);border-radius:12px;padding:22px;display:grid;grid-template-columns:1fr 360px;gap:18px;color:#dfffe0;max-height:90vh;overflow:auto;
-  }
+:root{
+  --bg1:#020204;
+  --bg2:#07120a;
+  --neon:#00ff7f;
+  --muted:#6f8a6f;
+  --accent:#00c174;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,"Roboto Mono",monospace;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#bfffcf;overflow-x:hidden;}
+.wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:15px;}
+.card{
+  width:100%;max-width:1050px;background:linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.35));border:1px solid rgba(0,255,127,0.06);backdrop-filter: blur(4px);box-shadow:0 20px 80px rgba(0,0,0,0.7);border-radius:12px;padding:15px;display:grid;grid-template-columns:1fr 300px;gap:12px;color:#dfffe0;overflow:auto;
+}
+/* Terminal */
+.term{background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(6,17,11,0.18));border-radius:8px;padding:12px;height:500px;overflow:auto;border:1px solid rgba(0,255,127,0.06);display:flex;flex-direction:column;}
+.term .title{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.dot{width:10px;height:10px;border-radius:50%;background:rgba(0,255,127,0.25);box-shadow:0 0 8px rgba(0,255,127,0.45) inset}
+.term .meta{color:var(--muted);font-size:12px}
+.viewport{flex:1;overflow:auto;padding:5px 6px;border-radius:6px;background:linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.06));border:1px solid rgba(0,255,127,0.02)}
+pre{margin:0;font-size:12px;line-height:1.35;color:var(--neon);white-space:pre-wrap;word-break:break-word}
+.muted{color:var(--muted)}
+.cmd{color:#9fffd8}
+.type{display:inline-block;border-right:2px solid var(--neon);padding-right:4px;animation:blink 1s steps(2,start) infinite}
+@keyframes blink{50%{border-color:transparent}}
+.inputBar{display:flex;gap:6px;margin-top:8px;align-items:center}
+.prompt{color:var(--muted);font-size:12px}
+input.cmdInput{flex:1;padding:8px 10px;border-radius:6px;border:1px solid rgba(0,255,127,0.06);background:rgba(0,0,0,0.4);color:var(--neon);outline:none;font-family:inherit;font-size:13px;}
+button.exec{padding:8px 10px;border-radius:6px;background:var(--neon);color:#021005;border:none;cursor:pointer;font-weight:700}
 
-  /* Terminal */
-  .term{background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(6,17,11,0.18));border-radius:8px;padding:14px;height:520px;overflow:auto;border:1px solid rgba(0,255,127,0.06);box-shadow: inset 0 0 40px rgba(0,255,127,0.02); display:flex;flex-direction:column;}
-  .term .title{display:flex;gap:10px;align-items:center;margin-bottom:8px}
-  .dot{width:10px;height:10px;border-radius:50%;background:rgba(0,255,127,0.25);box-shadow:0 0 8px rgba(0,255,127,0.45) inset}
-  .term .meta{color:var(--muted);font-size:13px}
-  .viewport{flex:1;overflow:auto;padding:6px 8px;border-radius:6px;background:linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.06));border:1px solid rgba(0,255,127,0.02)}
-  pre{margin:0;font-size:13px;line-height:1.45;color:var(--neon);white-space:pre-wrap;word-break:break-word}
-  .muted{color:var(--muted)}
-  .cmd{color:#9fffd8}
-  .type{display:inline-block;border-right:2px solid var(--neon);padding-right:6px;animation:blink 1s steps(2,start) infinite}
-  @keyframes blink{50%{border-color:transparent}}
+/* Right side */
+.side{display:flex;flex-direction:column;gap:10px;align-items:stretch;justify-content:flex-start;overflow:auto;max-height:500px}
+.profile{padding:12px;border-radius:8px;background:linear-gradient(180deg,rgba(0,0,0,0.18),rgba(0,0,0,0.06));border:1px solid rgba(0,255,127,0.04)}
+.name{font-size:18px;color:var(--accent);font-weight:700;letter-spacing:1px}
+.desc{font-size:12px;color:#b8eec0;margin-top:4px}
+.emailBtn{display:flex;gap:6px;align-items:center;margin-top:10px;background:#07110a;border-radius:6px;padding:8px 10px;border:1px solid rgba(0,255,127,0.04);cursor:pointer}
+.emailBtn:hover{background:rgba(0,255,127,0.03)}
+.links{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.links a{flex:1 1 calc(50% - 6px);text-align:center;padding:8px;border-radius:6px;background:rgba(0,255,127,0.03);color:#caffd1;text-decoration:none;border:1px solid rgba(0,255,127,0.04);font-weight:700;}
+.links a:hover{background:var(--accent);color:#021005;transform:translateY(-3px)}
+.meta{margin-top:auto;padding-top:6px;color:var(--muted);font-size:11px;text-align:center}
 
-  .inputBar{display:flex;gap:8px;margin-top:10px;align-items:center}
-  .prompt{color:var(--muted);font-size:13px}
-  input.cmdInput{flex:1;padding:10px 12px;border-radius:8px;border:1px solid rgba(0,255,127,0.06);background:rgba(0,0,0,0.4);color:var(--neon);outline:none;font-family:inherit;font-size:14px;}
-  button.exec{padding:10px 12px;border-radius:8px;background:var(--neon);color:#021005;border:none;cursor:pointer;font-weight:700}
-
-  /* Right side */
-  .side{display:flex;flex-direction:column;gap:12px;align-items:stretch;justify-content:flex-start;overflow:auto;max-height:520px}
-  .profile{padding:16px;border-radius:8px;background:linear-gradient(180deg,rgba(0,0,0,0.18),rgba(0,0,0,0.06));border:1px solid rgba(0,255,127,0.04)}
-  .name{font-size:20px;color:var(--accent);font-weight:700;letter-spacing:1px}
-  .desc{font-size:13px;color:#b8eec0;margin-top:6px}
-  .emailBtn{display:flex;gap:8px;align-items:center;margin-top:12px;background:#07110a;border-radius:8px;padding:10px 12px;border:1px solid rgba(0,255,127,0.04);cursor:pointer}
-  .emailBtn:hover{background:rgba(0,255,127,0.03)}
-  .links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-  .links a{flex:1 1 calc(50% - 8px);text-align:center;padding:10px;border-radius:8px;background:rgba(0,255,127,0.03);color:#caffd1;text-decoration:none;border:1px solid rgba(0,255,127,0.04);font-weight:700;}
-  .links a:hover{background:var(--accent);color:#021005;transform:translateY(-4px)}
-  .meta{margin-top:auto;padding-top:8px;color:var(--muted);font-size:12px;text-align:center}
+/* Responsive */
+@media(max-width:768px){
+  .card{grid-template-columns:1fr;max-height:none;}
+  .term{height:400px;}
+  .side{max-height:none;}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="card" role="main">
-    <!-- Terminal -->
-    <div class="term" role="region" aria-label="terminal">
-      <div class="title"><div class="dot"></div><div class="meta">mrweirdo@terminal</div></div>
-      <div class="viewport" id="viewport" tabindex="0" aria-live="polite">
-        <pre id="log">
+<div class="card" role="main">
+  <!-- Terminal -->
+  <div class="term" role="region" aria-label="terminal">
+    <div class="title"><div class="dot"></div><div class="meta">mrweirdo@terminal</div></div>
+    <div class="viewport" id="viewport" tabindex="0" aria-live="polite">
+      <pre id="log">
 <span class="muted">[boot]</span> initializing system...
 <span class="muted">[boot]</span> establishing secure channel... <span class="cmd">OK</span>
 <span class="muted">[net]</span> connecting to onion-net... <span class="cmd">online</span>
@@ -67,101 +71,86 @@
 <span class="muted">[run]</span> welcome back <span class="cmd">MR WEIRDOO</span>
 
 &gt; <span id="typed" class="type">scanning ports...</span>
-        </pre>
-      </div>
+      </pre>
+    </div>
+    <div class="inputBar">
+      <div class="prompt">&gt;</div>
+      <input id="cmdInput" class="cmdInput" autocomplete="off" placeholder="Type command (help, scan, osint, history, clear)">
+      <button id="execBtn" class="exec">RUN</button>
+    </div>
+  </div>
 
-      <div class="inputBar">
-        <div class="prompt">&gt;</div>
-        <input id="cmdInput" class="cmdInput" autocomplete="off" placeholder="Type command (help, scan, osint, history, clear)">
-        <button id="execBtn" class="exec">RUN</button>
+  <!-- Profile -->
+  <aside class="side" aria-label="profile and actions">
+    <div class="profile">
+      <div class="links">
+        <a id="tryOsintTop" href="/osint.html" target="_self">TRY OSINT TOOL</a>
+      </div>
+      <div class="name">MR WEIRDOO</div>
+      <div class="desc">I AM WEIRDOO, DOING SOMETHING RELATED TO HACKING, AND FOR FUN.</div>
+      <div class="emailBtn" id="copyEmail">Email: RTBASS60@GMAIL.COM (click to copy)</div>
+      <div class="links">
+        <a href="https://t.me/IAMMRWEIRDOO" target="_blank">TELEGRAM</a>
+        <a href="https://instagram.com/IAMMRWEIRDOO" target="_blank">INSTAGRAM</a>
+        <a href="https://www.youtube.com/@IAMMRWEIRDO" target="_blank">YOUTUBE</a>
       </div>
     </div>
-
-    <!-- Profile -->
-    <aside class="side" aria-label="profile and actions">
-      <div class="profile">
-        <div class="links">
-          <a id="tryOsintTop" href="/osint.html" target="_self">TRY OSINT TOOL</a>
-        </div>
-        <div class="name">MR WEIRDOO</div>
-        <div class="desc">I AM WEIRDOO, DOING SOMETHING RELATED TO HACKING, AND FOR FUN.</div>
-        <div class="emailBtn" id="copyEmail">Email: RTBASS60@GMAIL.COM (click to copy)</div>
-        <div class="links">
-          <a href="https://t.me/IAMMRWEIRDOO" target="_blank">TELEGRAM</a>
-          <a href="https://instagram.com/IAMMRWEIRDOO" target="_blank">INSTAGRAM</a>
-          <a href="https://www.youtube.com/@IAMMRWEIRDO" target="_blank">YOUTUBE</a>
-        </div>
-      </div>
-      <div class="meta">system: secure • theme: neon-term • hosted on Vercel</div>
-    </aside>
-  </div>
+    <div class="meta">system: secure • theme: neon-term • hosted on Vercel</div>
+  </aside>
+</div>
 </div>
 
 <script>
-/* ---------- Helpers ---------- */
-const viewport = document.getElementById('viewport');
-const log = document.getElementById('log');
-const input = document.getElementById('cmdInput');
-const execBtn = document.getElementById('execBtn');
-const copyEmail = document.getElementById('copyEmail');
-const tryOsintTop = document.getElementById('tryOsintTop');
+const viewport=document.getElementById('viewport');
+const log=document.getElementById('log');
+const input=document.getElementById('cmdInput');
+const execBtn=document.getElementById('execBtn');
+const copyEmail=document.getElementById('copyEmail');
+const tryOsintTop=document.getElementById('tryOsintTop');
 
 function safeText(t){ return t.replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function appendLine(html){
-  const node = document.createElement("div");
-  node.innerHTML = html;
-  log.appendChild(node);
-  viewport.scrollTop = viewport.scrollHeight;
-  return node;
-}
+function appendLine(html){const node=document.createElement("div");node.innerHTML=html;log.appendChild(node);viewport.scrollTop=viewport.scrollHeight;return node;}
 
-/* ---------- Dynamic scan ---------- */
-const statuses = ["open","closed","filtered","unreachable","reset"];
-const ports = [22, 80, 443, 445, 3389, 3306, 8080];
-const ipBlocks = ["10.0","192.168","172.16","8.8","104.21","45.33"];
+// Dynamic scanning
+const statuses=["open","closed","filtered","unreachable","reset"];
+const ports=[22,80,443,445,3389,3306,8080];
+const ipBlocks=["10.0","192.168","172.16","8.8","104.21","45.33"];
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function randomIP(){const block=pick(ipBlocks);return block+"."+rand(0,255)+"."+rand(1,254);}
+function createScanLine(){return Math.random()<0.5?`[net] handshake with ${randomIP()} - ${pick(statuses)}`:`[scan] host ${randomIP()} - port ${pick(ports)}/tcp - ${pick(statuses)}`;}
+function appendScanLine(){appendLine('<span class="muted">[auto]</span> '+safeText(createScanLine()));}
+setInterval(appendScanLine,800+Math.random()*700);
 
-function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
-function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-function randomIP(){ const block = pick(ipBlocks); return block+"."+rand(0,255)+"."+rand(1,254); }
-function createScanLine(){
-  if(Math.random()<0.5) return `[net] handshake with ${randomIP()} - ${pick(statuses)}`;
-  return `[scan] host ${randomIP()} - port ${pick(ports)}/tcp - ${pick(statuses)}`;
-}
-
-function appendScanLine(){ appendLine('<span class="muted">[auto]</span> ' + safeText(createScanLine())); }
-
-/* Continuous scanning every 800-1500ms */
-setInterval(appendScanLine, 800 + Math.random()*700);
-
-/* ---------- Typing effect ---------- */
+// Typing effect
 const phrases=["scanning ports...","probing hosts...","initializing modules..."];
 let pi=0,pos=0,forward=true;
 const typedEl=document.getElementById('typed');
 function typeTick(){
-  const phrase = phrases[pi];
-  if(forward){ pos++; typedEl.textContent=phrase.slice(0,pos); if(pos===phrase.length){forward=false; setTimeout(typeTick,900); return;} setTimeout(typeTick,40+Math.random()*60);}
-  else{ pos--; typedEl.textContent=phrase.slice(0,pos); if(pos===0){forward=true; pi=(pi+1)%phrases.length; setTimeout(typeTick,200); return;} setTimeout(typeTick,20+Math.random()*40);}
+  const phrase=phrases[pi];
+  if(forward){pos++;typedEl.textContent=phrase.slice(0,pos);if(pos===phrase.length){forward=false;setTimeout(typeTick,900);return;}setTimeout(typeTick,40+Math.random()*60);}
+  else{pos--;typedEl.textContent=phrase.slice(0,pos);if(pos===0){forward=true;pi=(pi+1)%phrases.length;setTimeout(typeTick,200);return;}setTimeout(typeTick,20+Math.random()*40);}
 }
 typeTick();
 
-/* ---------- Commands ---------- */
+// Commands
 function runCommand(raw){
   const cmd=raw.trim();
   if(!cmd) return;
   appendLine('<span class="muted">[user]</span> &gt; <span class="cmd">'+safeText(cmd)+'</span>');
   const c=cmd.toLowerCase();
-  if(c==='help'){ appendLine('<span class="muted">[info]</span> commands: help, scan, osint, history, clear'); return;}
-  if(c==='scan'){ for(let k=0;k<6;k++) setTimeout(()=>appendScanLine(), k*250); return;}
-  if(c==='osint'){ appendLine('<span class="muted">[action]</span> redirecting to OSINT tool...'); setTimeout(()=>window.location.href='/osint.html',700); return;}
-  if(c==='history'){ appendLine('<span class="muted">[info]</span> history mode ON'); return;}
-  if(c==='clear'){ Array.from(log.children).forEach(n=>{ if(n.classList && n.classList.contains('scan-line')) n.remove(); }); appendLine('<span class="muted">[info]</span> cleared ephemeral lines'); return;}
+  if(c==='help'){appendLine('<span class="muted">[info]</span> commands: help, scan, osint, history, clear');return;}
+  if(c==='scan'){for(let k=0;k<6;k++)setTimeout(()=>appendScanLine(),k*250);return;}
+  if(c==='osint'){appendLine('<span class="muted">[action]</span> redirecting to OSINT tool...');setTimeout(()=>window.location.href='/osint.html',700);return;}
+  if(c==='history'){appendLine('<span class="muted">[info]</span> history mode ON');return;}
+  if(c==='clear'){Array.from(log.children).forEach(n=>{if(n.classList && n.classList.contains('scan-line')) n.remove();});appendLine('<span class="muted">[info]</span> cleared ephemeral lines');return;}
   appendLine('<span class="muted">[error]</span> command not found: <span class="cmd">'+safeText(cmd)+'</span>');
 }
-execBtn.addEventListener('click',()=>{ runCommand(input.value); input.value=''; input.focus(); });
-input.addEventListener('keydown',e=>{ if(e.key==='Enter'){ runCommand(input.value); input.value=''; e.preventDefault(); } });
+execBtn.addEventListener('click',()=>{runCommand(input.value);input.value='';input.focus();});
+input.addEventListener('keydown',e=>{if(e.key==='Enter'){runCommand(input.value);input.value='';e.preventDefault();}});
 
-copyEmail.addEventListener('click',()=>{ navigator.clipboard.writeText('RTBASS60@GMAIL.COM').then(()=>appendLine('<span class="muted">[info]</span> Email copied to clipboard')); });
-tryOsintTop.addEventListener('click',(e)=>{ e.preventDefault(); window.location.href='/osint.html'; });
+copyEmail.addEventListener('click',()=>{navigator.clipboard.writeText('RTBASS60@GMAIL.COM').then(()=>appendLine('<span class="muted">[info]</span> Email copied to clipboard'));});
+tryOsintTop.addEventListener('click',(e)=>{e.preventDefault();window.location.href='/osint.html';});
 </script>
 </body>
 </html>
