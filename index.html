@@ -2,120 +2,168 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>MR WEIRDOO</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>MR WEIRDOO — Terminal</title>
 <style>
+  /* Base */
   :root{
-    --bg:#1e1e2f;       /* deep background */
-    --card:#2c2c3f;     /* card background */
-    --accent:#ff4d6d;   /* main highlight color */
-    --text:#f0f0f5;     /* main text */
-    --muted:#a0a0b0;    /* secondary text */
+    --bg1:#020204;
+    --bg2:#07120a;
+    --neon:#00ff7f; /* neon green */
+    --muted:#6f8a6f;
+    --card:#06110b;
+    --accent:#00c174;
   }
-
   *{box-sizing:border-box}
-  body{
-    margin:0;
-    background: linear-gradient(135deg, #1e1e2f, #15152a);
-    color: var(--text);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
+  html,body{height:100%;margin:0;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#bfffcf;overflow:hidden}
+  /* matrix background */
+  .matrix{
+    position:fixed;inset:0;z-index:0;pointer-events:none;background:
+      radial-gradient(ellipse at center, rgba(0,255,127,0.03) 0%, transparent 40%),
+      linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.6));
   }
-
+  .drops{position:absolute;inset:0;opacity:0.08}
+  .drop{position:absolute;left:50%;top:0;transform:translateX(-50%);width:1px;height:100vh;background:linear-gradient(to bottom, rgba(0,255,127,0) 0%, rgba(0,255,127,0.15) 20%, rgba(0,255,127,0.6) 60%, rgba(0,255,127,0) 100%);animation:fall calc(var(--i) * 0.8s) linear infinite}
+  @keyframes fall{0%{transform:translateY(-100vh) translateX(var(--x,0))}100%{transform:translateY(100vh) translateX(var(--x,0))}}
+  /* layout */
+  .wrap{position:relative;z-index:2;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:30px}
   .card{
-    max-width:600px;
-    background: var(--card);
-    padding: 40px 30px;
-    border-radius: 20px;
-    box-shadow: 0 15px 50px rgba(0,0,0,0.6);
-    text-align: center;
-    animation: fadeIn 0.8s ease forwards;
+    width:100%;max-width:920px;background:linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.35));border:1px solid rgba(0,255,127,0.06);backdrop-filter: blur(4px);box-shadow:0 20px 80px rgba(0,0,0,0.7);border-radius:12px;padding:28px;display:grid;grid-template-columns:1fr 360px;gap:22px;
+    color:#dfffe0;
   }
-
-  @keyframes fadeIn{
-    from {opacity:0; transform: translateY(20px);}
-    to {opacity:1; transform: translateY(0);}
+  /* left: terminal */
+  .term{
+    background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(6,17,11,0.18));
+    border-radius:8px;padding:18px;height:360px;overflow:hidden;border:1px solid rgba(0,255,127,0.06);
+    box-shadow: inset 0 0 40px rgba(0,255,127,0.02);
   }
-
-  h1{
-    font-size: 2.6rem;
-    margin: 0 0 10px;
-    color: var(--accent);
-    letter-spacing: 1px;
+  .term .title{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+  .dot{width:10px;height:10px;border-radius:50%;background:rgba(0,255,127,0.25);box-shadow:0 0 8px rgba(0,255,127,0.45) inset}
+  .term pre{margin:0;font-size:14px;line-height:1.45;color:var(--neon);white-space:pre-wrap;word-break:break-word}
+  .cmd{color:#a8ffd0}
+  .muted{color:var(--muted)}
+  /* typing effect */
+  .type{display:inline-block;border-right:2px solid var(--neon);padding-right:6px;animation:blink 1s steps(2,start) infinite}
+  @keyframes blink{50%{border-color:transparent}}
+  /* right: info/actions */
+  .side{display:flex;flex-direction:column;gap:12px;align-items:stretch;justify-content:flex-start}
+  .profile{
+    padding:16px;border-radius:8px;background:linear-gradient(180deg,rgba(0,0,0,0.18),rgba(0,0,0,0.06));border:1px solid rgba(0,255,127,0.04)
   }
-
-  p.lead{
-    font-size: 1.2rem;
-    color: var(--muted);
-    margin-bottom: 20px;
-  }
-
-  .email{
-    display:inline-block;
-    background: #3a3a5a;
-    padding: 10px 16px;
-    border-radius: 12px;
-    cursor:pointer;
-    transition: background 0.3s;
-    margin-bottom: 25px;
-  }
-
-  .email:hover{
-    background: var(--accent);
-    color:#fff;
-  }
-
-  nav{
-    margin-top: 20px;
-  }
-
-  nav a{
-    display:inline-block;
-    margin:8px;
-    padding:12px 18px;
-    border-radius:12px;
-    background:#3a3a5a;
-    color: #f0f0f5;
-    text-decoration:none;
-    font-weight:500;
-    transition: 0.3s;
-  }
-
-  nav a:hover{
-    background: var(--accent);
-    color:#fff;
-    transform: translateY(-3px);
-  }
-
+  .name{font-size:20px;color:var(--accent);font-weight:700;letter-spacing:1px}
+  .desc{font-size:13px;color:#b8eec0;margin-top:6px}
+  .emailBtn{display:flex;gap:8px;align-items:center;margin-top:12px;background:#07110a;border-radius:8px;padding:10px 12px;border:1px solid rgba(0,255,127,0.04);cursor:pointer}
+  .emailBtn:hover{background:rgba(0,255,127,0.03)}
+  .links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .links a{flex:1 1 calc(50% - 8px);text-align:center;padding:10px;border-radius:8px;background:rgba(0,255,127,0.03);color:#caffd1;text-decoration:none;border:1px solid rgba(0,255,127,0.04);font-weight:600;}
+  .links a:hover{background:var(--accent);color:#021005;transform:translateY(-4px)}
+  /* footer techy */
+  .meta{margin-top:auto;padding-top:8px;color:var(--muted);font-size:12px;text-align:center}
+  /* small screens */
+  @media(max-width:880px){.card{grid-template-columns:1fr;}.term{height:280px}}
 </style>
 </head>
 <body>
-  <div class="card">
-    <h1>MR WEIRDOO</h1>
-    <p class="lead">I AM WEIRDOO, DOING SOMETHING RELATED TO HACKING, AND FOR FUN.</p>
-
-    <div class="email" id="email" title="Click to copy">
-      Email: RTBASS60@GMAIL.COM (click to copy)
+  <div class="matrix" aria-hidden="true">
+    <div class="drops">
+      <!-- decorative falling lines -->
+      <div class="drop" style="--i:8;--x:-40vw;left:8%"></div>
+      <div class="drop" style="--i:10;--x:20vw;left:20%"></div>
+      <div class="drop" style="--i:12;--x:-12vw;left:32%"></div>
+      <div class="drop" style="--i:9;--x:6vw;left:44%"></div>
+      <div class="drop" style="--i:11;--x:-8vw;left:56%"></div>
+      <div class="drop" style="--i:13;--x:10vw;left:68%"></div>
+      <div class="drop" style="--i:7;--x:-6vw;left:80%"></div>
+      <div class="drop" style="--i:14;--x:4vw;left:92%"></div>
     </div>
+  </div>
 
-    <nav>
-      <a href="https://t.me/IAMMRWEIRDOO" target="_blank" rel="noopener">Telegram</a>
-      <a href="https://instagram.com/IAMMRWEIRDOO" target="_blank" rel="noopener">Instagram</a>
-      <a href="https://www.youtube.com/@IAMMRWEIRDO" target="_blank" rel="noopener">YouTube</a>
-      <a href="/osint" target="_blank" rel="noopener">OSINT Tool</a>
-    </nav>
+  <div class="wrap">
+    <div class="card" role="main">
+      <div class="term" aria-live="polite">
+        <div class="title"><div class="dot"></div><div class="muted">mrweirdo@terminal</div></div>
+
+        <pre id="log">
+<span class="muted">[boot]</span> initializing system...
+<span class="muted">[boot]</span> establishing secure channel... OK
+<span class="muted">[net]</span> connecting to onion-net... <span class="cmd">online</span>
+
+<span class="muted">[user]</span> last login: <span class="cmd">Oct 24 2025 03:12:44</span>
+
+<span class="muted">[run]</span> welcome back <span class="cmd">MR WEIRDOO</span>
+&gt; <span id="typed" class="type"></span>
+        </pre>
+      </div>
+
+      <aside class="side">
+        <div class="profile">
+          <div class="name">MR WEIRDOO</div>
+          <div class="desc">I AM WEIRDOO, DOING SOMETHING RELATED TO HACKING, AND FOR FUN.</div>
+
+          <div class="emailBtn" id="copyEmail" title="Click to copy email">
+            <div style="font-weight:700;color:var(--neon);">Email</div>
+            <div style="margin-left:auto;color:var(--muted);">RTBASS60@GMAIL.COM</div>
+          </div>
+
+          <div class="links" role="navigation" aria-label="social links">
+            <a href="https://t.me/IAMMRWEIRDOO" target="_blank" rel="noopener">TELEGRAM</a>
+            <a href="https://instagram.com/IAMMRWEIRDOO" target="_blank" rel="noopener">INSTAGRAM</a>
+            <a href="https://www.youtube.com/@IAMMRWEIRDO" target="_blank" rel="noopener">YOUTUBE</a>
+            <a href="/osint" target="_blank" rel="noopener">OSINT TOOL</a>
+          </div>
+        </div>
+
+        <div class="meta">system: secure • theme: neon-term • hosted on Vercel</div>
+      </aside>
+    </div>
   </div>
 
 <script>
-  const emailEl = document.getElementById('email');
-  emailEl.addEventListener('click', () => {
-    navigator.clipboard.writeText('RTBASS60@GMAIL.COM')
-      .then(() => alert('Email copied!'));
-  });
+/* typing effect lines */
+const phrases = [
+  "syncing modules...",
+  "scanning ports...",
+  "loading exploits...",
+  "listening on 0.0.0.0:8080",
+  "type 'help' for commands"
+];
+let i = 0, pos = 0, forward = true;
+const typedEl = document.getElementById('typed');
+
+function typeTick(){
+  const phrase = phrases[i];
+  if(forward){
+    pos++;
+    typedEl.textContent = phrase.slice(0,pos);
+    if(pos === phrase.length){ forward = false; setTimeout(typeTick,900); return; }
+    setTimeout(typeTick,40 + Math.random()*60);
+  } else {
+    pos--;
+    typedEl.textContent = phrase.slice(0,pos);
+    if(pos === 0){ forward = true; i = (i+1) % phrases.length; setTimeout(typeTick,200); return; }
+    setTimeout(typeTick,20 + Math.random()*40);
+  }
+}
+typeTick();
+
+/* copy email */
+document.getElementById('copyEmail').addEventListener('click', ()=>{
+  navigator.clipboard.writeText('RTBASS60@GMAIL.COM').then(()=> {
+    flashMessage('Email copied to clipboard');
+  }).catch(()=> flashMessage('Copy failed'));
+});
+
+/* small flash message inside terminal */
+function flashMessage(txt){
+  const log = document.getElementById('log');
+  const node = document.createElement('div');
+  node.style.color = 'var(--neon)';
+  node.style.marginTop = '8px';
+  node.style.fontSize = '13px';
+  node.textContent = '» ' + txt;
+  log.appendChild(node);
+  setTimeout(()=> { node.style.opacity = '0'; node.style.transition = 'opacity 600ms'; setTimeout(()=> node.remove(),900) }, 1800);
+}
 </script>
 </body>
 </html>
