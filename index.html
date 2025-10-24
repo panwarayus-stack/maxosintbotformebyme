@@ -14,14 +14,14 @@
     --card:#06110b;
   }
   *{box-sizing:border-box}
-  html,body{height:100%;margin:0;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#bfffcf;overflow:hidden}
+  html,body{height:100%;margin:0;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#bfffcf;overflow:auto}
   .wrap{position:relative;z-index:2;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:30px}
   .card{
-    width:100%;max-width:1050px;background:linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.35));border:1px solid rgba(0,255,127,0.06);backdrop-filter: blur(4px);box-shadow:0 20px 80px rgba(0,0,0,0.7);border-radius:12px;padding:22px;display:grid;grid-template-columns:1fr 360px;gap:18px;color:#dfffe0;
+    width:100%;max-width:1050px;background:linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.35));border:1px solid rgba(0,255,127,0.06);backdrop-filter: blur(4px);box-shadow:0 20px 80px rgba(0,0,0,0.7);border-radius:12px;padding:22px;display:grid;grid-template-columns:1fr 360px;gap:18px;color:#dfffe0;max-height:90vh;overflow:auto;
   }
 
   /* Terminal */
-  .term{background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(6,17,11,0.18));border-radius:8px;padding:14px;height:520px;overflow:hidden;border:1px solid rgba(0,255,127,0.06);box-shadow: inset 0 0 40px rgba(0,255,127,0.02); display:flex;flex-direction:column;}
+  .term{background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(6,17,11,0.18));border-radius:8px;padding:14px;height:520px;overflow:auto;border:1px solid rgba(0,255,127,0.06);box-shadow: inset 0 0 40px rgba(0,255,127,0.02); display:flex;flex-direction:column;}
   .term .title{display:flex;gap:10px;align-items:center;margin-bottom:8px}
   .dot{width:10px;height:10px;border-radius:50%;background:rgba(0,255,127,0.25);box-shadow:0 0 8px rgba(0,255,127,0.45) inset}
   .term .meta{color:var(--muted);font-size:13px}
@@ -38,7 +38,7 @@
   button.exec{padding:10px 12px;border-radius:8px;background:var(--neon);color:#021005;border:none;cursor:pointer;font-weight:700}
 
   /* Right side */
-  .side{display:flex;flex-direction:column;gap:12px;align-items:stretch;justify-content:flex-start}
+  .side{display:flex;flex-direction:column;gap:12px;align-items:stretch;justify-content:flex-start;overflow:auto;max-height:520px}
   .profile{padding:16px;border-radius:8px;background:linear-gradient(180deg,rgba(0,0,0,0.18),rgba(0,0,0,0.06));border:1px solid rgba(0,255,127,0.04)}
   .name{font-size:20px;color:var(--accent);font-weight:700;letter-spacing:1px}
   .desc{font-size:13px;color:#b8eec0;margin-top:6px}
@@ -80,6 +80,9 @@
     <!-- Profile -->
     <aside class="side" aria-label="profile and actions">
       <div class="profile">
+        <div class="links">
+          <a id="tryOsintTop" href="/osint.html" target="_self">TRY OSINT TOOL</a>
+        </div>
         <div class="name">MR WEIRDOO</div>
         <div class="desc">I AM WEIRDOO, DOING SOMETHING RELATED TO HACKING, AND FOR FUN.</div>
         <div class="emailBtn" id="copyEmail">Email: RTBASS60@GMAIL.COM (click to copy)</div>
@@ -87,7 +90,6 @@
           <a href="https://t.me/IAMMRWEIRDOO" target="_blank">TELEGRAM</a>
           <a href="https://instagram.com/IAMMRWEIRDOO" target="_blank">INSTAGRAM</a>
           <a href="https://www.youtube.com/@IAMMRWEIRDO" target="_blank">YOUTUBE</a>
-          <a id="tryOsint" href="/osint.html" target="_self">TRY OSINT TOOL</a>
         </div>
       </div>
       <div class="meta">system: secure • theme: neon-term • hosted on Vercel</div>
@@ -102,7 +104,7 @@ const log = document.getElementById('log');
 const input = document.getElementById('cmdInput');
 const execBtn = document.getElementById('execBtn');
 const copyEmail = document.getElementById('copyEmail');
-const tryOsint = document.getElementById('tryOsint');
+const tryOsintTop = document.getElementById('tryOsintTop');
 
 function safeText(t){ return t.replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function appendLine(html){
@@ -159,6 +161,7 @@ execBtn.addEventListener('click',()=>{ runCommand(input.value); input.value=''; 
 input.addEventListener('keydown',e=>{ if(e.key==='Enter'){ runCommand(input.value); input.value=''; e.preventDefault(); } });
 
 copyEmail.addEventListener('click',()=>{ navigator.clipboard.writeText('RTBASS60@GMAIL.COM').then(()=>appendLine('<span class="muted">[info]</span> Email copied to clipboard')); });
+tryOsintTop.addEventListener('click',(e)=>{ e.preventDefault(); window.location.href='/osint.html'; });
 </script>
 </body>
 </html>
