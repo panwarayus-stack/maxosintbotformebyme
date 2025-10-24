@@ -5,51 +5,48 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>MR WEIRDOO — Terminal</title>
 <style>
-  /* Base */
   :root{
     --bg1:#020204;
     --bg2:#07120a;
-    --neon:#00ff7f; /* neon green */
+    --neon:#00ff7f;
     --muted:#6f8a6f;
     --card:#06110b;
     --accent:#00c174;
   }
   *{box-sizing:border-box}
   html,body{height:100%;margin:0;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#bfffcf;overflow:hidden}
-  /* matrix background */
-  .matrix{
-    position:fixed;inset:0;z-index:0;pointer-events:none;background:
-      radial-gradient(ellipse at center, rgba(0,255,127,0.03) 0%, transparent 40%),
-      linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.6));
-  }
+  .matrix{position:fixed;inset:0;z-index:0;pointer-events:none;background:
+    radial-gradient(ellipse at center, rgba(0,255,127,0.03) 0%, transparent 40%),
+    linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.6));}
   .drops{position:absolute;inset:0;opacity:0.08}
   .drop{position:absolute;left:50%;top:0;transform:translateX(-50%);width:1px;height:100vh;background:linear-gradient(to bottom, rgba(0,255,127,0) 0%, rgba(0,255,127,0.15) 20%, rgba(0,255,127,0.6) 60%, rgba(0,255,127,0) 100%);animation:fall calc(var(--i) * 0.8s) linear infinite}
   @keyframes fall{0%{transform:translateY(-100vh) translateX(var(--x,0))}100%{transform:translateY(100vh) translateX(var(--x,0))}}
-  /* layout */
+
   .wrap{position:relative;z-index:2;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:30px}
   .card{
-    width:100%;max-width:920px;background:linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.35));border:1px solid rgba(0,255,127,0.06);backdrop-filter: blur(4px);box-shadow:0 20px 80px rgba(0,0,0,0.7);border-radius:12px;padding:28px;display:grid;grid-template-columns:1fr 360px;gap:22px;
-    color:#dfffe0;
+    width:100%;max-width:960px;background:linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.35));border:1px solid rgba(0,255,127,0.06);backdrop-filter: blur(4px);box-shadow:0 20px 80px rgba(0,0,0,0.7);border-radius:12px;padding:28px;display:grid;grid-template-columns:1fr 360px;gap:22px;color:#dfffe0;
   }
-  /* left: terminal */
+
   .term{
     background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(6,17,11,0.18));
-    border-radius:8px;padding:18px;height:360px;overflow:hidden;border:1px solid rgba(0,255,127,0.06);
-    box-shadow: inset 0 0 40px rgba(0,255,127,0.02);
+    border-radius:8px;padding:18px;height:420px;overflow:hidden;border:1px solid rgba(0,255,127,0.06);
+    box-shadow: inset 0 0 40px rgba(0,255,127,0.02); position:relative;
   }
   .term .title{display:flex;gap:10px;align-items:center;margin-bottom:8px}
   .dot{width:10px;height:10px;border-radius:50%;background:rgba(0,255,127,0.25);box-shadow:0 0 8px rgba(0,255,127,0.45) inset}
-  .term pre{margin:0;font-size:14px;line-height:1.45;color:var(--neon);white-space:pre-wrap;word-break:break-word}
+  .term pre{margin:0;font-size:14px;line-height:1.45;color:var(--neon);white-space:pre-wrap;word-break:break-word;height:calc(100% - 28px);overflow:auto;padding-right:6px}
   .cmd{color:#a8ffd0}
   .muted{color:var(--muted)}
-  /* typing effect */
+
   .type{display:inline-block;border-right:2px solid var(--neon);padding-right:6px;animation:blink 1s steps(2,start) infinite}
   @keyframes blink{50%{border-color:transparent}}
-  /* right: info/actions */
+
+  /* scanning lines animation */
+  .scan-line{color:#8ffff2;font-size:13px;opacity:0;transform:translateX(-8px);transition:opacity .35s, transform .35s}
+  .scan-line.show{opacity:1;transform:translateX(0)}
+
   .side{display:flex;flex-direction:column;gap:12px;align-items:stretch;justify-content:flex-start}
-  .profile{
-    padding:16px;border-radius:8px;background:linear-gradient(180deg,rgba(0,0,0,0.18),rgba(0,0,0,0.06));border:1px solid rgba(0,255,127,0.04)
-  }
+  .profile{padding:16px;border-radius:8px;background:linear-gradient(180deg,rgba(0,0,0,0.18),rgba(0,0,0,0.06));border:1px solid rgba(0,255,127,0.04)}
   .name{font-size:20px;color:var(--accent);font-weight:700;letter-spacing:1px}
   .desc{font-size:13px;color:#b8eec0;margin-top:6px}
   .emailBtn{display:flex;gap:8px;align-items:center;margin-top:12px;background:#07110a;border-radius:8px;padding:10px 12px;border:1px solid rgba(0,255,127,0.04);cursor:pointer}
@@ -57,16 +54,15 @@
   .links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
   .links a{flex:1 1 calc(50% - 8px);text-align:center;padding:10px;border-radius:8px;background:rgba(0,255,127,0.03);color:#caffd1;text-decoration:none;border:1px solid rgba(0,255,127,0.04);font-weight:600;}
   .links a:hover{background:var(--accent);color:#021005;transform:translateY(-4px)}
-  /* footer techy */
   .meta{margin-top:auto;padding-top:8px;color:var(--muted);font-size:12px;text-align:center}
+
   /* small screens */
-  @media(max-width:880px){.card{grid-template-columns:1fr;}.term{height:280px}}
+  @media(max-width:880px){.card{grid-template-columns:1fr;}.term{height:320px}}
 </style>
 </head>
 <body>
   <div class="matrix" aria-hidden="true">
     <div class="drops">
-      <!-- decorative falling lines -->
       <div class="drop" style="--i:8;--x:-40vw;left:8%"></div>
       <div class="drop" style="--i:10;--x:20vw;left:20%"></div>
       <div class="drop" style="--i:12;--x:-12vw;left:32%"></div>
@@ -80,18 +76,22 @@
 
   <div class="wrap">
     <div class="card" role="main">
-      <div class="term" aria-live="polite">
+      <div class="term" aria-live="polite" aria-atomic="false">
         <div class="title"><div class="dot"></div><div class="muted">mrweirdo@terminal</div></div>
 
-        <pre id="log">
+        <pre id="log" tabindex="0" aria-label="terminal output">
 <span class="muted">[boot]</span> initializing system...
-<span class="muted">[boot]</span> establishing secure channel... OK
+<span class="muted">[boot]</span> establishing secure channel... <span class="cmd">OK</span>
 <span class="muted">[net]</span> connecting to onion-net... <span class="cmd">online</span>
 
 <span class="muted">[user]</span> last login: <span class="cmd">Oct 24 2025 03:12:44</span>
 
 <span class="muted">[run]</span> welcome back <span class="cmd">MR WEIRDOO</span>
-&gt; <span id="typed" class="type"></span>
+
+&gt; <span id="typed" class="type">scanning port</span>
+
+<!-- dynamic scanning container -->
+<div id="scanArea" aria-hidden="true"></div>
         </pre>
       </div>
 
@@ -121,11 +121,13 @@
 <script>
 /* typing effect lines */
 const phrases = [
-  "syncing modules...",
-  "scanning ports...",
-  "loading exploits...",
-  "listening on 0.0.0.0:8080",
-  "type 'help' for commands"
+  "scanning port",
+  "scanning port 22...",
+  "scanning port 80...",
+  "scanning host 192.168.1.1...",
+  "probing service banners...",
+  "searching for open SMB...",
+  "checking tls fingerprint..."
 ];
 let i = 0, pos = 0, forward = true;
 const typedEl = document.getElementById('typed');
@@ -146,6 +148,64 @@ function typeTick(){
 }
 typeTick();
 
+/* continuous scanning feed */
+const scanArea = document.getElementById('scanArea');
+const scanTemplates = [
+  "[scan] host 10.0.{r}.1 - port {p}/tcp - {s}",
+  "[scan] host 172.16.{r}.5 - port {p}/tcp - {s}",
+  "[scan] host 192.168.{r}.{x} - port {p}/tcp - {s}",
+  "[net] handshake with {ip} - {s}",
+  "[svc] banner: {svc} - {s}",
+  "[probe] {ip} - tls:{tls} - {s}"
+];
+const services = ["ssh","http","https","ftp","smtp","rdp","mysql","mssql","smb"];
+const statuses = ["open","closed","filtered","host down","unreachable","reset"];
+const tlsList = ["valid","self-signed","expired","weak-cipher"];
+const ips = ["10.0.4.12","172.16.8.9","192.168.0.25","8.8.8.8","104.21.30.84"];
+
+function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a }
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)] }
+
+function createScanLine(){
+  const tmpl = pick(scanTemplates);
+  const line = tmpl
+    .replace("{r}", rand(1,254))
+    .replace("{p}", [22,80,443,3306,3389,53,445,8080][rand(0,7)])
+    .replace("{s}", pick(statuses))
+    .replace("{svc}", pick(services))
+    .replace("{ip}", pick(ips))
+    .replace("{tls}", pick(tlsList))
+    .replace("{x}", rand(2,250));
+  return line;
+}
+
+function appendScan(){
+  const node = document.createElement('div');
+  node.className = 'scan-line';
+  node.textContent = createScanLine();
+  scanArea.appendChild(node);
+  // small delay so CSS transition works
+  setTimeout(()=> node.classList.add('show'), 20);
+  // auto-scroll log to bottom
+  const log = document.getElementById('log');
+  log.scrollTop = log.scrollHeight;
+
+  // fade/remove after some time
+  setTimeout(()=>{
+    node.classList.remove('show');
+    setTimeout(()=> node.remove(), 1200);
+  }, 4200 + Math.random()*1600);
+}
+
+// start continuous scanning at random intervals
+let scanInterval = setInterval(appendScan, 900 + Math.random()*700);
+function variableScanner(){
+  clearInterval(scanInterval);
+  scanInterval = setInterval(appendScan, 700 + Math.random()*900);
+}
+variableScanner();
+setInterval(variableScanner, 7000 + Math.random()*4000);
+
 /* copy email */
 document.getElementById('copyEmail').addEventListener('click', ()=>{
   navigator.clipboard.writeText('RTBASS60@GMAIL.COM').then(()=> {
@@ -153,7 +213,7 @@ document.getElementById('copyEmail').addEventListener('click', ()=>{
   }).catch(()=> flashMessage('Copy failed'));
 });
 
-/* small flash message inside terminal */
+/* small flash message appended to terminal */
 function flashMessage(txt){
   const log = document.getElementById('log');
   const node = document.createElement('div');
@@ -162,7 +222,8 @@ function flashMessage(txt){
   node.style.fontSize = '13px';
   node.textContent = '» ' + txt;
   log.appendChild(node);
-  setTimeout(()=> { node.style.opacity = '0'; node.style.transition = 'opacity 600ms'; setTimeout(()=> node.remove(),900) }, 1800);
+  log.scrollTop = log.scrollHeight;
+  setTimeout(()=> { node.style.opacity = '0'; node.style.transition = 'opacity 600ms'; setTimeout(()=> node.remove(),900) }, 2200);
 }
 </script>
 </body>
