@@ -7,7 +7,7 @@
   ],
   "routes": [
     { "src": "/", "dest": "/index.html" },
-    { "src": "/osint", "dest": "/num.html" },
+    { "src": "/num", "dest": "/num.html" },
     { "src": "/api/fetchData", "dest": "/api/fetchData.js" }
   ]
 }
