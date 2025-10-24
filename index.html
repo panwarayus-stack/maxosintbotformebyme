@@ -11,34 +11,40 @@
   --neon:#00ff7f;
   --muted:#6f8a6f;
   --accent:#00c174;
+  --glass: rgba(0,0,0,0.35);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,"Roboto Mono",monospace;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#bfffcf;overflow-x:hidden;}
-.wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:15px;}
+/* full-screen matrix canvas sits behind everything */
+#matrixCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block;pointer-events:none;opacity:0.28;mix-blend-mode:screen}
+/* main layout */
+.wrap{position:relative;z-index:2;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:15px;}
 .card{
-  width:100%;max-width:1050px;background:linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.35));border:1px solid rgba(0,255,127,0.06);backdrop-filter: blur(4px);box-shadow:0 20px 80px rgba(0,0,0,0.7);border-radius:12px;padding:15px;display:grid;grid-template-columns:1fr 300px;gap:12px;color:#dfffe0;overflow:auto;
+  width:100%;max-width:1050px;background:linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.35));border:1px solid rgba(0,255,127,0.06);backdrop-filter: blur(6px);box-shadow:0 20px 80px rgba(0,0,0,0.7);border-radius:12px;padding:15px;display:grid;grid-template-columns:1fr 300px;gap:12px;color:#dfffe0;overflow:hidden;max-height:calc(100vh - 40px);
 }
 /* Terminal */
-.term{background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(6,17,11,0.18));border-radius:8px;padding:12px;height:500px;overflow:auto;border:1px solid rgba(0,255,127,0.06);display:flex;flex-direction:column;}
+.term{background:linear-gradient(180deg, rgba(0,0,0,0.22), rgba(6,17,11,0.12));border-radius:8px;padding:12px;min-height:320px;overflow:auto;border:1px solid rgba(0,255,127,0.06);display:flex;flex-direction:column;}
 .term .title{display:flex;gap:8px;align-items:center;margin-bottom:6px}
-.dot{width:10px;height:10px;border-radius:50%;background:rgba(0,255,127,0.25);box-shadow:0 0 8px rgba(0,255,127,0.45) inset}
+.dot{width:10px;height:10px;border-radius:50%;background:rgba(0,255,127,0.22);box-shadow:0 0 8px rgba(0,255,127,0.45) inset}
 .term .meta{color:var(--muted);font-size:12px}
-.viewport{flex:1;overflow:auto;padding:5px 6px;border-radius:6px;background:linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.06));border:1px solid rgba(0,255,127,0.02)}
-pre{margin:0;font-size:12px;line-height:1.35;color:var(--neon);white-space:pre-wrap;word-break:break-word}
+.viewport{flex:1;overflow:auto;padding:6px 8px;border-radius:6px;background:linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.04));border:1px solid rgba(0,255,127,0.02)}
+pre{margin:0;font-size:13px;line-height:1.45;color:var(--neon);white-space:pre-wrap;word-break:break-word}
 .muted{color:var(--muted)}
 .cmd{color:#9fffd8}
 .type{display:inline-block;border-right:2px solid var(--neon);padding-right:4px;animation:blink 1s steps(2,start) infinite}
 @keyframes blink{50%{border-color:transparent}}
-.inputBar{display:flex;gap:6px;margin-top:8px;align-items:center}
+.inputBar{display:flex;gap:8px;margin-top:8px;align-items:center}
 .prompt{color:var(--muted);font-size:12px}
 input.cmdInput{flex:1;padding:8px 10px;border-radius:6px;border:1px solid rgba(0,255,127,0.06);background:rgba(0,0,0,0.4);color:var(--neon);outline:none;font-family:inherit;font-size:13px;}
 button.exec{padding:8px 10px;border-radius:6px;background:var(--neon);color:#021005;border:none;cursor:pointer;font-weight:700}
 
 /* Right side */
-.side{display:flex;flex-direction:column;gap:10px;align-items:stretch;justify-content:flex-start;overflow:auto;max-height:500px}
-.profile{padding:12px;border-radius:8px;background:linear-gradient(180deg,rgba(0,0,0,0.18),rgba(0,0,0,0.06));border:1px solid rgba(0,255,127,0.04)}
+.side{display:flex;flex-direction:column;gap:10px;align-items:stretch;justify-content:flex-start;overflow:auto;max-height:500px;padding-left:4px}
+.profile{padding:12px;border-radius:8px;background:linear-gradient(180deg,rgba(0,0,0,0.12),rgba(0,0,0,0.02));border:1px solid rgba(0,255,127,0.04)}
+.topOsint{display:flex;gap:8px;margin-bottom:10px}
+.topOsint a{flex:1;padding:10px;border-radius:8px;text-align:center;text-decoration:none;background:linear-gradient(90deg,var(--neon),var(--accent));color:#021005;font-weight:800}
 .name{font-size:18px;color:var(--accent);font-weight:700;letter-spacing:1px}
-.desc{font-size:12px;color:#b8eec0;margin-top:4px}
+.desc{font-size:12px;color:#b8eec0;margin-top:6px}
 .emailBtn{display:flex;gap:6px;align-items:center;margin-top:10px;background:#07110a;border-radius:6px;padding:8px 10px;border:1px solid rgba(0,255,127,0.04);cursor:pointer}
 .emailBtn:hover{background:rgba(0,255,127,0.03)}
 .links{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
@@ -46,22 +52,24 @@ button.exec{padding:8px 10px;border-radius:6px;background:var(--neon);color:#021
 .links a:hover{background:var(--accent);color:#021005;transform:translateY(-3px)}
 .meta{margin-top:auto;padding-top:6px;color:var(--muted);font-size:11px;text-align:center}
 
-/* Responsive */
-@media(max-width:768px){
-  .card{grid-template-columns:1fr;max-height:none;}
-  .term{height:400px;}
-  .side{max-height:none;}
+/* small screens */
+@media(max-width:900px){
+  .card{grid-template-columns:1fr;max-height:none;padding:12px}
+  .term{min-height:280px;height:60vh}
+  .side{max-height:none}
 }
 </style>
 </head>
 <body>
+<canvas id="matrixCanvas" aria-hidden="true"></canvas>
+
 <div class="wrap">
-<div class="card" role="main">
-  <!-- Terminal -->
-  <div class="term" role="region" aria-label="terminal">
-    <div class="title"><div class="dot"></div><div class="meta">mrweirdo@terminal</div></div>
-    <div class="viewport" id="viewport" tabindex="0" aria-live="polite">
-      <pre id="log">
+  <div class="card" role="main" aria-live="polite">
+    <!-- Terminal -->
+    <div class="term" role="region" aria-label="terminal">
+      <div class="title"><div class="dot" aria-hidden="true"></div><div class="meta">mrweirdo@terminal</div></div>
+      <div class="viewport" id="viewport" tabindex="0" aria-label="terminal output">
+        <pre id="log">
 <span class="muted">[boot]</span> initializing system...
 <span class="muted">[boot]</span> establishing secure channel... <span class="cmd">OK</span>
 <span class="muted">[net]</span> connecting to onion-net... <span class="cmd">online</span>
@@ -71,86 +79,238 @@ button.exec{padding:8px 10px;border-radius:6px;background:var(--neon);color:#021
 <span class="muted">[run]</span> welcome back <span class="cmd">MR WEIRDOO</span>
 
 &gt; <span id="typed" class="type">scanning ports...</span>
-      </pre>
-    </div>
-    <div class="inputBar">
-      <div class="prompt">&gt;</div>
-      <input id="cmdInput" class="cmdInput" autocomplete="off" placeholder="Type command (help, scan, osint, history, clear)">
-      <button id="execBtn" class="exec">RUN</button>
-    </div>
-  </div>
+        </pre>
+      </div>
 
-  <!-- Profile -->
-  <aside class="side" aria-label="profile and actions">
-    <div class="profile">
-      <div class="links">
-        <a id="tryOsintTop" href="/osint.html" target="_self">TRY OSINT TOOL</a>
-      </div>
-      <div class="name">MR WEIRDOO</div>
-      <div class="desc">I AM WEIRDOO, DOING SOMETHING RELATED TO HACKING, AND FOR FUN.</div>
-      <div class="emailBtn" id="copyEmail">Email: RTBASS60@GMAIL.COM (click to copy)</div>
-      <div class="links">
-        <a href="https://t.me/IAMMRWEIRDOO" target="_blank">TELEGRAM</a>
-        <a href="https://instagram.com/IAMMRWEIRDOO" target="_blank">INSTAGRAM</a>
-        <a href="https://www.youtube.com/@IAMMRWEIRDO" target="_blank">YOUTUBE</a>
+      <div class="inputBar" role="form" aria-label="command input">
+        <div class="prompt" aria-hidden="true">&gt;</div>
+        <input id="cmdInput" class="cmdInput" autocomplete="off" placeholder="Type command (help, scan, osint, history, clear)">
+        <button id="execBtn" class="exec" aria-label="run command">RUN</button>
       </div>
     </div>
-    <div class="meta">system: secure • theme: neon-term • hosted on Vercel</div>
-  </aside>
-</div>
+
+    <!-- Profile / Actions -->
+    <aside class="side" aria-label="profile and actions">
+      <div class="profile" role="article">
+        <div class="topOsint"><a id="tryOsintTop" href="/osint.html" target="_self" rel="noopener">TRY OSINT TOOL</a></div>
+        <div class="name">MR WEIRDOO</div>
+        <div class="desc">I AM WEIRDOO, DOING SOMETHING RELATED TO HACKING, AND FOR FUN.</div>
+        <div class="emailBtn" id="copyEmail" title="Click to copy email">Email: RTBASS60@GMAIL.COM (click to copy)</div>
+        <div class="links" role="navigation" aria-label="social links">
+          <a href="https://t.me/IAMMRWEIRDOO" target="_blank" rel="noopener">TELEGRAM</a>
+          <a href="https://instagram.com/IAMMRWEIRDOO" target="_blank" rel="noopener">INSTAGRAM</a>
+          <a href="https://www.youtube.com/@IAMMRWEIRDO" target="_blank" rel="noopener">YOUTUBE</a>
+        </div>
+      </div>
+      <div class="meta">system: secure • theme: neon-term • hosted on Vercel</div>
+    </aside>
+  </div>
 </div>
 
 <script>
-const viewport=document.getElementById('viewport');
-const log=document.getElementById('log');
-const input=document.getElementById('cmdInput');
-const execBtn=document.getElementById('execBtn');
-const copyEmail=document.getElementById('copyEmail');
-const tryOsintTop=document.getElementById('tryOsintTop');
+/* -------------------------
+   Matrix Canvas Background
+   Lightweight, performant, auto-resizes
+   ------------------------- */
+(() => {
+  const canvas = document.getElementById('matrixCanvas');
+  const ctx = canvas.getContext('2d', { alpha: true });
+  let width = 0, height = 0;
+  let columns = [];
+  const fontSize = 14; // adjusts density; smaller = denser
+  const letters = "0123456789ABCDEFghijklmnopqrstuvwxyz@#%&*()[]{}<>/\\|";
+  function resize() {
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+    width = canvas.width = Math.floor(window.innerWidth * dpr);
+    height = canvas.height = Math.floor(window.innerHeight * dpr);
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    ctx.setTransform(1,0,0,1,0,0); // reset transform
+    ctx.scale(dpr, dpr);
+    columns = [];
+    const cols = Math.floor(window.innerWidth / (fontSize * 0.6));
+    for(let i=0;i<cols;i++) columns[i] = { y: Math.random()*-1000 };
+  }
+  function draw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.globalCompositeOperation = 'source-over';
+    // fade effect
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.font = `${fontSize}px monospace`;
+    for(let i=0;i<columns.length;i++){
+      const colX = i * (fontSize * 0.6);
+      const col = columns[i];
+      const dropY = col.y;
+      // draw a few chars per column for richer look
+      const char = letters.charAt(Math.floor(Math.random() * letters.length));
+      // head (bright)
+      ctx.fillStyle = 'rgba(144, 255, 200, 0.95)';
+      ctx.fillText(char, colX, dropY);
+      // trail
+      for(let t=1;t<6;t++){
+        const trailY = dropY - t * (fontSize * 0.9);
+        const alpha = Math.max(0, 0.6 - t*0.12);
+        ctx.fillStyle = `rgba(0,255,127,${alpha})`;
+        ctx.fillText(letters.charAt(Math.floor(Math.random()*letters.length)), colX, trailY);
+      }
+      col.y += (Math.random()*8 + 4);
+      if(col.y > (window.innerHeight + 50)) col.y = Math.random()*-200;
+    }
+    requestAnimationFrame(draw);
+  }
+  // init
+  resize();
+  window.addEventListener('resize', () => { resize(); });
+  // lower CPU on background tabs
+  let rafId = requestAnimationFrame(draw);
+})();
 
-function safeText(t){ return t.replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function appendLine(html){const node=document.createElement("div");node.innerHTML=html;log.appendChild(node);viewport.scrollTop=viewport.scrollHeight;return node;}
+/* -------------------------
+   Terminal / Scanning Logic
+   ------------------------- */
+(function(){
+  const viewport = document.getElementById('viewport');
+  const log = document.getElementById('log');
+  const input = document.getElementById('cmdInput');
+  const execBtn = document.getElementById('execBtn');
+  const copyEmail = document.getElementById('copyEmail');
+  const tryOsintTop = document.getElementById('tryOsintTop');
+  const typedEl = document.getElementById('typed');
 
-// Dynamic scanning
-const statuses=["open","closed","filtered","unreachable","reset"];
-const ports=[22,80,443,445,3389,3306,8080];
-const ipBlocks=["10.0","192.168","172.16","8.8","104.21","45.33"];
-function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
-function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
-function randomIP(){const block=pick(ipBlocks);return block+"."+rand(0,255)+"."+rand(1,254);}
-function createScanLine(){return Math.random()<0.5?`[net] handshake with ${randomIP()} - ${pick(statuses)}`:`[scan] host ${randomIP()} - port ${pick(ports)}/tcp - ${pick(statuses)}`;}
-function appendScanLine(){appendLine('<span class="muted">[auto]</span> '+safeText(createScanLine()));}
-setInterval(appendScanLine,800+Math.random()*700);
+  function safeText(t){ return t.replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function appendLine(html, opts = {}) {
+    // opts.keep = true => persistent; otherwise ephemeral
+    const node = document.createElement('div');
+    node.innerHTML = html;
+    if(!opts.keep) node.classList.add('scan-line');
+    log.appendChild(node);
+    // auto scroll smoothly
+    viewport.scrollTop = viewport.scrollHeight;
+    return node;
+  }
 
-// Typing effect
-const phrases=["scanning ports...","probing hosts...","initializing modules..."];
-let pi=0,pos=0,forward=true;
-const typedEl=document.getElementById('typed');
-function typeTick(){
-  const phrase=phrases[pi];
-  if(forward){pos++;typedEl.textContent=phrase.slice(0,pos);if(pos===phrase.length){forward=false;setTimeout(typeTick,900);return;}setTimeout(typeTick,40+Math.random()*60);}
-  else{pos--;typedEl.textContent=phrase.slice(0,pos);if(pos===0){forward=true;pi=(pi+1)%phrases.length;setTimeout(typeTick,200);return;}setTimeout(typeTick,20+Math.random()*40);}
-}
-typeTick();
+  // dynamic generators
+  const statuses = ["open","closed","filtered","unreachable","reset","timeout"];
+  const ports = [22,80,443,445,3389,3306,8080,53,25];
+  const ipBlocks = ["10.0","192.168","172.16","8.8","104.21","45.33","185.199","203.0"];
+  function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+  function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+  function randomIP(){const block=pick(ipBlocks);return block+"."+rand(0,255)+"."+rand(1,254);}
 
-// Commands
-function runCommand(raw){
-  const cmd=raw.trim();
-  if(!cmd) return;
-  appendLine('<span class="muted">[user]</span> &gt; <span class="cmd">'+safeText(cmd)+'</span>');
-  const c=cmd.toLowerCase();
-  if(c==='help'){appendLine('<span class="muted">[info]</span> commands: help, scan, osint, history, clear');return;}
-  if(c==='scan'){for(let k=0;k<6;k++)setTimeout(()=>appendScanLine(),k*250);return;}
-  if(c==='osint'){appendLine('<span class="muted">[action]</span> redirecting to OSINT tool...');setTimeout(()=>window.location.href='/osint.html',700);return;}
-  if(c==='history'){appendLine('<span class="muted">[info]</span> history mode ON');return;}
-  if(c==='clear'){Array.from(log.children).forEach(n=>{if(n.classList && n.classList.contains('scan-line')) n.remove();});appendLine('<span class="muted">[info]</span> cleared ephemeral lines');return;}
-  appendLine('<span class="muted">[error]</span> command not found: <span class="cmd">'+safeText(cmd)+'</span>');
-}
-execBtn.addEventListener('click',()=>{runCommand(input.value);input.value='';input.focus();});
-input.addEventListener('keydown',e=>{if(e.key==='Enter'){runCommand(input.value);input.value='';e.preventDefault();}});
+  function createScanLine(){
+    if(Math.random() < 0.5){
+      return `[net] handshake with ${randomIP()} - ${pick(statuses)}`;
+    } else {
+      return `[scan] host ${randomIP()} - port ${pick(ports)}/tcp - ${pick(statuses)}`;
+    }
+  }
 
-copyEmail.addEventListener('click',()=>{navigator.clipboard.writeText('RTBASS60@GMAIL.COM').then(()=>appendLine('<span class="muted">[info]</span> Email copied to clipboard'));});
-tryOsintTop.addEventListener('click',(e)=>{e.preventDefault();window.location.href='/osint.html';});
+  // continuous scanning with slight randomness
+  let scanningTimer = null;
+  function startScanner(){
+    function tick(){
+      appendLine('<span class="muted">[auto]</span> ' + safeText(createScanLine()));
+      const next = 600 + Math.random()*1200;
+      scanningTimer = setTimeout(tick, next);
+    }
+    tick();
+  }
+  startScanner();
+
+  // typing effect for the prompt
+  const phrases = ["scanning ports...","probing hosts...","initializing modules...","listening 0.0.0.0:8080"];
+  let pi = 0, ppos = 0, pfwd = true;
+  function typeTick(){
+    const phrase = phrases[pi];
+    if(pfwd){
+      ppos++;
+      typedEl.textContent = phrase.slice(0,ppos);
+      if(ppos === phrase.length){ pfwd = false; setTimeout(typeTick,900); return; }
+      setTimeout(typeTick,40 + Math.random()*60);
+    } else {
+      ppos--;
+      typedEl.textContent = phrase.slice(0,ppos);
+      if(ppos === 0){ pfwd = true; pi = (pi+1) % phrases.length; setTimeout(typeTick,200); return; }
+      setTimeout(typeTick,20 + Math.random()*40);
+    }
+  }
+  typeTick();
+
+  // guaranteed messages occasionally
+  const guaranteed = [
+    () => `<span class="muted">[guard]</span> monitored host 192.168.1.1 - ssh: open - fingerprint: SHA256:${Math.random().toString(36).slice(2,12).toUpperCase()}`,
+    () => `<span class="muted">[svc]</span> banner: ssh - OpenSSH_${rand(6,9)}.0p${rand(0,3)} - simulated`,
+    () => `<span class="muted">[net]</span> gateway ${randomIP()} - latency ${rand(1,40)}ms`
+  ];
+  setInterval(()=>{ appendLine(guaranteed[rand(0,guaranteed.length-1)](), {keep:true}); }, 45000 + Math.random()*30000);
+
+  // input & commands
+  function runCommand(raw){
+    const cmd = (raw||'').trim();
+    if(!cmd) return;
+    appendLine(`<span class="muted">[user]</span> &gt; <span class="cmd">${safeText(cmd)}</span>`, {keep:true});
+    const parts = cmd.split(/\s+/);
+    const c = parts[0].toLowerCase();
+
+    if(c === 'help'){
+      const help = [
+        '<span class="muted">[info]</span> commands: <span class="cmd">help</span>, <span class="cmd">scan</span>, <span class="cmd">osint</span>, <span class="cmd">history</span>, <span class="cmd">clear</span>',
+        '<span class="muted">[info]</span> note: This terminal is cosmetic. Use the OSINT tool for real lookups.'
+      ];
+      help.forEach(h => appendLine(h, {keep:true}));
+      return;
+    }
+
+    if(c === 'scan'){
+      for(let k=0;k<6;k++) setTimeout(()=> appendLine('<span class="muted">[scan]</span> ' + safeText(createScanLine())), k*220);
+      return;
+    }
+
+    if(c === 'osint'){
+      appendLine('<span class="muted">[action]</span> redirecting to OSINT tool...', {keep:true});
+      setTimeout(()=> window.location.href = '/osint.html', 700);
+      return;
+    }
+
+    if(c === 'history'){
+      appendLine('<span class="muted">[info]</span> history mode ON (lines will persist)', {keep:true});
+      return;
+    }
+
+    if(c === 'clear'){
+      // remove ephemeral (scan-line) nodes only
+      Array.from(log.children).forEach(n => {
+        if(!n || !n.classList) return;
+        if(n.classList.contains('scan-line')) n.remove();
+      });
+      appendLine('<span class="muted">[info]</span> cleared ephemeral lines', {keep:true});
+      return;
+    }
+
+    // unknown
+    appendLine('<span class="muted">[error]</span> command not found: <span class="cmd">'+safeText(cmd)+'</span>', {keep:true});
+  }
+
+  // wire UI
+  execBtn.addEventListener('click', ()=>{ runCommand(input.value); input.value=''; input.focus(); });
+  input.addEventListener('keydown', (e)=>{ if(e.key === 'Enter'){ runCommand(input.value); input.value=''; e.preventDefault(); } });
+  copyEmail.addEventListener('click', ()=> {
+    navigator.clipboard.writeText('RTBASS60@GMAIL.COM').then(()=> appendLine('<span class="muted">[info]</span> Email copied to clipboard', {keep:true}));
+  });
+  tryOsintTop.addEventListener('click', (e)=>{ /* natural link will navigate; also print line */ appendLine('<span class="muted">[action]</span> opening OSINT tool...', {keep:true}); });
+
+  // accessibility: focus input when viewport clicked
+  viewport.addEventListener('click', ()=> input.focus());
+
+  // initial help print (small)
+  setTimeout(()=> {
+    appendLine('<span class="muted">[info]</span> type <span class="cmd">help</span> for commands', {keep:true});
+  }, 900);
+
+  // keep viewport scrolled down
+  setInterval(()=> { viewport.scrollTop = viewport.scrollHeight; }, 600);
+})();
 </script>
 </body>
 </html>
