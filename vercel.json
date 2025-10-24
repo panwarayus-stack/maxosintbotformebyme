@@ -2,10 +2,12 @@
   "version": 2,
   "builds": [
     { "src": "index.html", "use": "@vercel/static" },
+    { "src": "osint.html", "use": "@vercel/static" },
     { "src": "api/fetchData.js", "use": "@vercel/node" }
   ],
   "routes": [
     { "src": "/", "dest": "/index.html" },
+    { "src": "/osint", "dest": "/osint.html" },
     { "src": "/api/fetchData", "dest": "/api/fetchData.js" }
   ]
 }
