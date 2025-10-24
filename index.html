@@ -1,0 +1,89 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MR WEIRDOO</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
+      color: #eee;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      transition: background 0.5s;
+    }
+    .container {
+      background: rgba(30,30,30,0.9);
+      padding: 2.5rem;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+      max-width: 500px;
+      text-align: center;
+      transform: scale(0);
+      animation: popin 0.5s forwards;
+    }
+    @keyframes popin {
+      to { transform: scale(1); }
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+      color: #ff6b6b;
+      animation: fadeIn 1s ease-in-out;
+    }
+    p {
+      margin-bottom: 1rem;
+      font-size: 1rem;
+      line-height: 1.5;
+      animation: fadeIn 1.5s ease-in-out;
+    }
+    a {
+      display: inline-block;
+      margin: 0.3rem;
+      padding: 0.5rem 1rem;
+      background: #333;
+      color: #eee;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+    a:hover {
+      background: #ff6b6b;
+      color: #fff;
+      transform: translateY(-3px);
+    }
+    .email {
+      cursor: pointer;
+      background: #222;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      display: inline-block;
+      transition: 0.3s;
+    }
+    .email:hover {
+      background: #ff6b6b;
+      color: #fff;
+      transform: translateY(-2px);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>MR WEIRDOO</h1>
+    <p>I AM WEIRDOO, DOING SOMETHING RELATED TO HACKING, AND FOR FUN.</p>
+    <p class="email" onclick="navigator.clipboard.writeText('RTBASS60@GMAIL.COM')">Email: RTBASS60@GMAIL.COM (click to copy)</p>
+    <div>
+      <a href="https://t.me/IAMMRWEIRDOO" target="_blank">Telegram</a>
+      <a href="https://instagram.com/IAMMRWEIRDOO" target="_blank">Instagram</a>
+      <a href="https://www.youtube.com/@IAMMRWEIRDO" target="_blank">YouTube</a>
+    </div>
+  </div>
+</body>
+</html>
