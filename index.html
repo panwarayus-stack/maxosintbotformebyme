@@ -68,6 +68,16 @@
       color: #fff;
       transform: translateY(-2px);
     }
+    .pfp {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin-bottom: 1rem;
+      border: 3px solid #ff6b6b;
+      object-fit: cover;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+      animation: fadeIn 1s ease-in-out;
+    }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -76,14 +86,19 @@
 </head>
 <body>
   <div class="container">
-    <h1>MR WEIRDOO</h1>
-    <p>I AM WEIRDOO, DOING SOMETHING RELATED TO HACKING, AND FOR FUN.</p>
-    <p class="email" onclick="navigator.clipboard.writeText('RTBASS60@GMAIL.COM')">Email: RTBASS60@GMAIL.COM (click to copy)</p>
-    <div>
-      <a href="https://t.me/IAMMRWEIRDOO" target="_blank">Telegram</a>
-      <a href="https://instagram.com/IAMMRWEIRDOO" target="_blank">Instagram</a>
-      <a href="https://www.youtube.com/@IAMMRWEIRDO" target="_blank">YouTube</a>
-    </div>
+    <!-- Profile picture -->
+    <img src="high-1761317634.jpg" alt="MR WEIRDOO" class="pfp"><h1>MR WEIRDOO</h1>
+<p>I AM WEIRDOO, DOING SOMETHING RELATED TO HACKING, AND FOR FUN.</p>
+<p class="email" onclick="navigator.clipboard.writeText('RTBASS60@GMAIL.COM')">
+  Email: RTBASS60@GMAIL.COM (click to copy)
+</p>
+<div>
+  <a href="https://t.me/IAMMRWEIRDOO" target="_blank">Telegram</a>
+  <a href="https://instagram.com/IAMMRWEIRDOO" target="_blank">Instagram</a>
+  <a href="https://www.youtube.com/@IAMMRWEIRDO" target="_blank">YouTube</a>
+  <a href="/osint" target="_blank">OSINT Tool</a>
+</div>
+
   </div>
 </body>
 </html>
