@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OSINT Lookup — MR WEIRDOO</title>
+<title>OSINT Multi Lookup — MR WEIRDOO</title>
 <style>
 body {
   background: #000;
@@ -19,6 +19,28 @@ h1 {
   margin-bottom: 20px;
   text-shadow: 0 0 15px #00eaff;
 }
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.tab-btn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 6px;
+  background: #111;
+  color: #00eaff;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 0 5px #00eaff;
+  transition: 0.3s;
+}
+.tab-btn:hover {
+  background: #00eaff;
+  color: #000;
+}
 .box {
   background: #111;
   padding: 20px;
@@ -27,9 +49,8 @@ h1 {
   width: 90%;
   max-width: 600px;
   text-align: center;
-  animation: fadeIn 1s ease-in-out;
 }
-select, input {
+input {
   width: 70%;
   padding: 10px;
   border: none;
@@ -39,9 +60,8 @@ select, input {
   text-align: center;
   margin-bottom: 10px;
 }
-button {
+button.lookup {
   padding: 10px 20px;
-  margin-top: 10px;
   border: none;
   border-radius: 6px;
   font-size: 16px;
@@ -51,7 +71,7 @@ button {
   cursor: pointer;
   transition: 0.3s;
 }
-button:hover {
+button.lookup:hover {
   background: #00bcd4;
 }
 pre {
@@ -85,10 +105,6 @@ pre {
 .loading {
   animation: blink 1s infinite alternate;
 }
-@keyframes fadeIn {
-  from {opacity: 0; transform: translateY(-20px);}
-  to {opacity: 1; transform: translateY(0);}
-}
 @keyframes blink {
   from {opacity: 0.3;}
   to {opacity: 1;}
@@ -97,30 +113,43 @@ pre {
 </head>
 <body>
 
-<h1>📱 OSINT Multi Lookup</h1>
+<h1>📱 OSINT Multi Lookup — MR WEIRDOO</h1>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab-btn" onclick="selectType('number')">NUMBER INFO</button>
+  <button class="tab-btn" onclick="selectType('aadhaar')">AADHAR INFO</button>
+  <button class="tab-btn" onclick="selectType('rc')">RC NUMBER INFO</button>
+  <button class="tab-btn" onclick="selectType('upi')">UPI ID INFO</button>
+  <button class="tab-btn" onclick="selectType('imei')">IMEI INFO</button>
+  <button class="tab-btn" onclick="selectType('ip')">IP INFO</button>
+  <button class="tab-btn" onclick="selectType('pincode')">PINCODE INFO</button>
+  <button class="tab-btn" onclick="selectType('aadhaarFamily')">AADHAR TO FAMILY</button>
+</div>
+
+<!-- Lookup box -->
 <div class="box">
-  <select id="type">
-    <option value="number">NUMBER INFO</option>
-    <option value="aadhaar">AADHAR INFO</option>
-    <option value="rc">RC NUMBER INFO</option>
-    <option value="upi">UPI ID INFO</option>
-    <option value="imei">IMEI INFO</option>
-    <option value="ip">IP INFO</option>
-    <option value="pincode">PINCODE INFO</option>
-    <option value="aadhaarFamily">AADHAR TO FAMILY INFO</option>
-  </select>
-  <br>
   <input type="text" id="term" placeholder="Enter value here..." />
   <br>
-  <button onclick="lookup()">🔍 Lookup</button>
+  <button class="lookup" onclick="lookup()">🔍 Lookup</button>
   <pre id="result">Result will appear here...</pre>
   <button class="copy-btn" id="copyBtn" onclick="copyResult()" style="display:none;">📋 Copy Data</button>
 </div>
 
 <script>
+let currentType = 'number'; // default type
+
+// called when tab button is clicked
+function selectType(type) {
+  currentType = type;
+  document.getElementById('term').value = '';
+  document.getElementById('result').textContent = 'Result will appear here...';
+  document.getElementById('copyBtn').style.display = 'none';
+}
+
+// lookup function
 async function lookup() {
   const term = document.getElementById('term').value.trim();
-  const type = document.getElementById('type').value;
   const resBox = document.getElementById('result');
   const copyBtn = document.getElementById('copyBtn');
 
@@ -134,8 +163,8 @@ async function lookup() {
   copyBtn.style.display = "none";
 
   try {
-    // dynamic endpoint based on type
-    const res = await fetch(`/api/fetchData?type=${type}&term=${encodeURIComponent(term)}`);
+    // call your API with type and term
+    const res = await fetch(`/api/fetchData?type=${currentType}&term=${encodeURIComponent(term)}`);
     const data = await res.text();
 
     resBox.classList.remove("loading");
@@ -145,7 +174,7 @@ async function lookup() {
       return;
     }
 
-    // optional: split long lines for readability
+    // split long lines for readability
     const formatted = data.split('\n').map(line => {
       if (line.includes("Address") || line.includes("Details")) {
         const parts = line.split(/(.{1,50})/g).filter(Boolean);
@@ -165,9 +194,16 @@ async function lookup() {
   }
 }
 
+// copy button
 function copyResult() {
   const text = document.getElementById('result').innerText;
   navigator.clipboard.writeText(text).then(() => alert("✅ Data copied to clipboard"));
+}
+
+// optional: auto select type from URL query param
+const params = new URLSearchParams(window.location.search);
+if (params.has('type')) {
+  selectType(params.get('type'));
 }
 </script>
 
