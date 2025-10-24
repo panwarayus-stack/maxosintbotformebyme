@@ -49,6 +49,7 @@ h1 {
   width: 90%;
   max-width: 600px;
   text-align: center;
+  display: none; /* hidden initially */
 }
 input {
   width: 70%;
@@ -128,7 +129,7 @@ pre {
 </div>
 
 <!-- Lookup box -->
-<div class="box">
+<div class="box" id="lookupBox">
   <input type="text" id="term" placeholder="Enter value here..." />
   <br>
   <button class="lookup" onclick="lookup()">🔍 Lookup</button>
@@ -137,17 +138,16 @@ pre {
 </div>
 
 <script>
-let currentType = 'number'; // default type
+let currentType = '';
 
-// called when tab button is clicked
 function selectType(type) {
   currentType = type;
+  document.getElementById('lookupBox').style.display = 'block';
   document.getElementById('term').value = '';
   document.getElementById('result').textContent = 'Result will appear here...';
   document.getElementById('copyBtn').style.display = 'none';
 }
 
-// lookup function
 async function lookup() {
   const term = document.getElementById('term').value.trim();
   const resBox = document.getElementById('result');
@@ -163,7 +163,6 @@ async function lookup() {
   copyBtn.style.display = "none";
 
   try {
-    // call your API with type and term
     const res = await fetch(`/api/fetchData?type=${currentType}&term=${encodeURIComponent(term)}`);
     const data = await res.text();
 
@@ -194,16 +193,9 @@ async function lookup() {
   }
 }
 
-// copy button
 function copyResult() {
   const text = document.getElementById('result').innerText;
   navigator.clipboard.writeText(text).then(() => alert("✅ Data copied to clipboard"));
-}
-
-// optional: auto select type from URL query param
-const params = new URLSearchParams(window.location.search);
-if (params.has('type')) {
-  selectType(params.get('type'));
 }
 </script>
 
