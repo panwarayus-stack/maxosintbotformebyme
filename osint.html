@@ -87,31 +87,30 @@
     <button onclick="lookup()">🔍 Lookup</button>
     <pre id="result">Result will appear here...</pre>
   </div>
+<script>
+async function lookup() {
+  const number = document.getElementById('number').value.trim();
+  const resBox = document.getElementById('result');
 
-  <script>
-    async function lookup() {
-      const number = document.getElementById('number').value.trim();
-      const resBox = document.getElementById('result');
+  if (!number) {
+    alert("⚠️ Please enter a number");
+    return;
+  }
 
-      if (!number) {
-        alert("⚠️ Please enter a number");
-        return;
-      }
+  resBox.textContent = "⏳ Fetching data...";
+  resBox.classList.add("loading");
 
-      resBox.textContent = "⏳ Fetching data...";
-      resBox.classList.add("loading");
+  try {
+    const res = await fetch(`/api/fetchData?number=${number}`);
+    const data = await res.text(); // <-- use text() instead of json()
 
-      try {
-        const res = await fetch(`/api/fetchData?number=${number}`);
-        const data = await res.json();
-
-        resBox.classList.remove("loading");
-        resBox.textContent = JSON.stringify(data, null, 2);
-      } catch (err) {
-        resBox.classList.remove("loading");
-        resBox.textContent = "❌ Error: " + err.message;
-      }
-    }
-  </script>
+    resBox.classList.remove("loading");
+    resBox.textContent = data; // directly display plain text
+  } catch (err) {
+    resBox.classList.remove("loading");
+    resBox.textContent = "❌ Error: " + err.message;
+  }
+}
+</script>
 </body>
 </html>
