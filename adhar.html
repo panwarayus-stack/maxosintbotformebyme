@@ -65,6 +65,8 @@
       margin-top: 20px;
       font-size: 14px;
       box-shadow: inset 0 0 10px #00eaff;
+      white-space: pre-wrap; /* so long lines wrap */
+      word-wrap: break-word;
     }
     @keyframes fadeIn {
       from {opacity: 0; transform: translateY(-20px);}
@@ -80,9 +82,9 @@
   </style>
 </head>
 <body>
-  <h1>📱 NUMBER INFO - BY MR WEIRDO</h1>
+  <h1>🆔 AADHAR INFO - BY MR WEIRDO</h1>
   <div class="box">
-    <input type="text" id="number" placeholder="Enter adhar no. e.g.607265034706" />
+    <input type="text" id="adhar" placeholder="Enter Aadhar no. e.g. 607265034706" />
     <br>
     <button onclick="lookup()">🔍 Lookup</button>
     <pre id="result">Result will appear here...</pre>
@@ -94,7 +96,7 @@
       const resBox = document.getElementById('result');
 
       if (!number) {
-        alert("⚠️ Please enter a adhar number");
+        alert("⚠️ Please enter an Aadhar number");
         return;
       }
 
@@ -103,10 +105,10 @@
 
       try {
         const res = await fetch(`/api/adhardata?adhar=${number}`);
-        const data = await res.text(); // <-- use text() instead of json()
+        const data = await res.text(); // plain text output
 
         resBox.classList.remove("loading");
-        resBox.textContent = data; // directly display plain text
+        resBox.textContent = data;
       } catch (err) {
         resBox.classList.remove("loading");
         resBox.textContent = "❌ Error: " + err.message;
