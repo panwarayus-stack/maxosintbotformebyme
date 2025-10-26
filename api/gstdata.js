@@ -1,37 +1,39 @@
-import fetch from 'node-fetch';
-
 export default async function handler(req, res) {
-  const gstin = req.query.gstin;
+  const gstNumber = req.query.gst;
 
-  if (!gstin) {
-    return res.status(400).send("❌ Missing ?gstin= parameter");
+  if (!gstNumber) {
+    return res.status(400).send("❌ Missing ?gst= parameter");
   }
 
   try {
-    // Fetch data from the first free API
-    const api1 = await fetch(`https://www.trackgst.com/api/gstin/${gstin}`);
-    const data1 = await api1.json();
+    const apiRes = await fetch(`https://gstlookup.hideme.eu.org/?gstNumber=${gstNumber}`);
+    const json = await apiRes.json();
 
-    // Fetch data from the second free API
-    const api2 = await fetch(`https://api.gstcheck.co.in/gstin/${gstin}`);
-    const data2 = await api2.json();
+    if (!json || json.status !== "success" || !json.data) {
+      return res.status(404).send("⚠️ No data found for this GSTIN");
+    }
 
-    // Combine data from both APIs
+    const data = json.data;
+
+    // Format the output with emojis
     const output = `
-🧾 GSTIN Info: ${gstin}
-🏢 Name: ${data1.tradeName || data2.tradeName || "-"}
-🌍 State: ${data1.state || data2.state || "-"}
-📅 Registration Date: ${data1.registrationDate || data2.registrationDate || "-"}
-✅ Status: ${data1.status || data2.status || "-"}
-📝 Constitution: ${data1.constitution || data2.constitution || "-"}
-📌 PAN: ${data1.pan || data2.pan || "-"}
-🔗 Jurisdiction: ${data1.jurisdiction || data2.jurisdiction || "-"}
+🆔 GSTIN: ${data.Gstin || "-"}
+🏢 Trade Name: ${data.TradeName || "-"}
+👤 Legal Name: ${data.LegalName || "-"}
+📍 Address: ${data.AddrBnm || ""} ${data.AddrBno || ""} ${data.AddrFlno || ""}, ${data.AddrSt || ""} ${data.AddrLoc || ""}
+🌐 State Code: ${data.StateCode || "-"}
+📮 Pincode: ${data.AddrPncd || "-"}
+💼 Taxpayer Type: ${data.TxpType || "-"}
+✅ Status: ${data.Status || "-"}
+⛔ Block Status: ${data.BlkStatus || "-"}
+📅 Registration Date: ${data.DtReg || "-"}
+📆 De-registration Date: ${data.DtDReg || "-"}
     `.trim();
 
     res.setHeader("Content-Type", "text/plain");
     res.status(200).send(output);
 
   } catch (err) {
-    res.status(500).send("❌ Error fetching GST info: " + err.message);
+    res.status(500).send("❌ Error fetching GST data: " + err.message);
   }
 }
