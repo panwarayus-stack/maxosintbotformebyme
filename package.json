@@ -1,0 +1,17 @@
+{
+  "name": "osint-project",
+  "version": "1.0.0",
+  "description": "OSINT lookup project by MrWeirdo",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "vercel dev"
+  },
+  "keywords": ["osint", "lookup", "vercel", "telegram"],
+  "author": "MrWeirdo",
+  "license": "MIT",
+  "dependencies": {
+    "node-fetch": "^2.6.7",
+    "express": "^4.18.2"
+  }
+}
