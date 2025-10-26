@@ -12,9 +12,9 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      padding: 20px;
+      min-height: 100vh;
       margin: 0;
+      padding: 20px;
     }
     h1 {
       font-size: 2em;
@@ -26,7 +26,7 @@
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 0 15px #00eaff;
-      width: 90%;
+      width: 100%;
       max-width: 700px;
       text-align: center;
       animation: fadeIn 1s ease-in-out;
@@ -55,34 +55,30 @@
     button:hover {
       background: #00bcd4;
     }
-    pre {
-      text-align: left;
-      background: #000;
-      padding: 15px;
-      border-radius: 8px;
-      overflow-x: auto;
-      margin-top: 20px;
-      font-size: 14px;
-      box-shadow: inset 0 0 10px #00eaff;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
-    img.phone-img {
-      max-width: 200px;
-      margin: 15px 0;
-      border: 2px solid #00eaff;
-      border-radius: 10px;
-    }
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(-20px);}
-      to {opacity: 1; transform: translateY(0);}
-    }
     .loading {
       animation: blink 1s infinite alternate;
     }
     @keyframes blink {
       from {opacity: 0.3;}
       to {opacity: 1;}
+    }
+    .imei-photo {
+      margin: 15px 0;
+      max-width: 200px;
+      border-radius: 8px;
+      border: 1px solid #00eaff;
+    }
+    .section-title {
+      font-weight: bold;
+      margin-top: 15px;
+      text-decoration: underline;
+      font-size: 1.1em;
+    }
+    .item {
+      margin-left: 10px;
+    }
+    .item span {
+      font-weight: bold;
     }
   </style>
 </head>
@@ -92,7 +88,7 @@
     <input type="text" id="imei" placeholder="Enter IMEI e.g. 356938035643809" />
     <br>
     <button onclick="lookup()">🔍 Lookup</button>
-    <pre id="result">Result will appear here...</pre>
+    <div id="result">Result will appear here...</div>
   </div>
 
   <script>
@@ -105,15 +101,63 @@
         return;
       }
 
-      resBox.textContent = "⏳ Fetching data...";
+      resBox.innerHTML = "⏳ Fetching data...";
       resBox.classList.add("loading");
 
       try {
-        const res = await fetch(`/api/imeidata?imei=${imei}`);
-        const data = await res.text();
+        const res = await fetch(`/api/imeidata.js?imei=${imei}`);
+        const data = await res.json();
 
         resBox.classList.remove("loading");
-        resBox.innerHTML = data;
+        resBox.innerHTML = "";
+
+        if (!data.result) {
+          resBox.textContent = "⚠️ No data found";
+          return;
+        }
+
+        const header = data.result.header;
+
+        // Show device image
+        if (header.photo) {
+          const img = document.createElement('img');
+          img.src = header.photo;
+          img.alt = header.model;
+          img.className = "imei-photo";
+          resBox.appendChild(img);
+        }
+
+        // Show header info with emojis
+        const headerDiv = document.createElement('div');
+        headerDiv.innerHTML = `
+          <div class="section-title">💡 Basic Info</div>
+          <div class="item">📱 Brand: <span>${header.brand || "-"}</span></div>
+          <div class="item">🔧 Model: <span>${header.model || "-"}</span></div>
+          <div class="item">🆔 IMEI: <span>${header.imei || "-"}</span></div>
+        `;
+        resBox.appendChild(headerDiv);
+
+        // Loop through items
+        let currentSection = null;
+        data.result.items.forEach(i => {
+          if (i.role === "header") {
+            currentSection = document.createElement('div');
+            let emoji = "ℹ️";
+            if(i.title.toLowerCase().includes("dimension")) emoji="📐";
+            if(i.title.toLowerCase().includes("display")) emoji="🖥️";
+            if(i.title.toLowerCase().includes("network")) emoji="📶";
+            if(i.title.toLowerCase().includes("battery")) emoji="🔋";
+            if(i.title.toLowerCase().includes("camera")) emoji="📸";
+            currentSection.innerHTML = `<div class="section-title">${emoji} ${i.title}</div>`;
+            resBox.appendChild(currentSection);
+          } else if (i.role === "item" && currentSection) {
+            const div = document.createElement('div');
+            div.className = "item";
+            div.textContent = `${i.title}: ${i.content || "-"}`;
+            currentSection.appendChild(div);
+          }
+        });
+
       } catch (err) {
         resBox.classList.remove("loading");
         resBox.textContent = "❌ Error: " + err.message;
