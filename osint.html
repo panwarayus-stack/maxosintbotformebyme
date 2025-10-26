@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NUMBER INFO</title>
+  <title>OSINT Tool - MR WEIRDO</title>
   <style>
     body {
       background: #000;
@@ -13,104 +13,63 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
       margin: 0;
     }
     h1 {
       font-size: 2em;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
       text-shadow: 0 0 15px #00eaff;
-    }
-    .box {
-      background: #111;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px #00eaff;
-      width: 90%;
-      max-width: 600px;
-      text-align: center;
-      animation: fadeIn 1s ease-in-out;
-    }
-    input {
-      width: 70%;
-      padding: 10px;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      outline: none;
       text-align: center;
     }
-    button {
-      padding: 10px 20px;
-      margin-top: 15px;
-      border: none;
-      border-radius: 6px;
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 50px;
+    }
+    .buttons button {
+      padding: 12px 20px;
       font-size: 16px;
       font-weight: bold;
+      border: none;
+      border-radius: 8px;
       background: #00eaff;
       color: #000;
       cursor: pointer;
       transition: 0.3s;
     }
-    button:hover {
+    .buttons button:hover {
       background: #00bcd4;
     }
-    pre {
-      text-align: left;
-      background: #000;
-      padding: 15px;
-      border-radius: 8px;
-      overflow-x: auto;
-      max-height: 300px;
-      margin-top: 20px;
-      font-size: 14px;
-      box-shadow: inset 0 0 10px #00eaff;
-    }
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(-20px);}
-      to {opacity: 1; transform: translateY(0);}
-    }
-    .loading {
-      animation: blink 1s infinite alternate;
-    }
-    @keyframes blink {
-      from {opacity: 0.3;}
-      to {opacity: 1;}
+    @media (max-width: 500px) {
+      .buttons {
+        flex-direction: column;
+      }
+      .buttons button {
+        width: 80%;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>📱 NUMBER INFO - BY MR WEIRDO</h1>
-  <div class="box">
-    <input type="text" id="number" placeholder="Enter number e.g.9627128776" />
-    <br>
-    <button onclick="lookup()">🔍 Lookup</button>
-    <pre id="result">Result will appear here...</pre>
+  <h1>💻 OSINT TOOL - BY MR WEIRDO</h1>
+
+  <div class="buttons">
+    <button onclick="redirect('num.html')">NUMBER INFO</button>
+    <button onclick="redirect('adhar.html')">AADHAR INFO</button>
+    <button onclick="redirect('upi.html')">UPI ID INFO</button>
+    <button onclick="redirect('vehicle.html')">VEHICLE INFO</button>
+    <button onclick="redirect('imei.html')">IMEI INFO</button>
+    <button onclick="redirect('pincode.html')">PINCODE INFO</button>
+    <button onclick="redirect('ip.html')">IP INFO</button>
+    <button onclick="redirect('ifsc.html')">IFSC INFO</button>
   </div>
 
   <script>
-    async function lookup() {
-      const number = document.getElementById('number').value.trim();
-      const resBox = document.getElementById('result');
-
-      if (!number) {
-        alert("⚠️ Please enter a number");
-        return;
-      }
-
-      resBox.textContent = "⏳ Fetching data...";
-      resBox.classList.add("loading");
-
-      try {
-        const res = await fetch(`/api/fetchData?number=${number}`);
-        const data = await res.text(); // <-- use text() instead of json()
-
-        resBox.classList.remove("loading");
-        resBox.textContent = data; // directly display plain text
-      } catch (err) {
-        resBox.classList.remove("loading");
-        resBox.textContent = "❌ Error: " + err.message;
-      }
+    function redirect(page) {
+      window.location.href = page;
     }
   </script>
 </body>
