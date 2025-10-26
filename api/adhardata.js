@@ -1,9 +1,9 @@
 const { exec } = require("child_process");
 
 export default async function handler(req, res) {
-  const number = req.query.number;
+  const adhar = req.query.adhar; // match the frontend
 
-  if (!number) {
+  if (!adhar) {
     return res.status(400).send("❌ Missing ?adhar= parameter");
   }
 
@@ -17,7 +17,7 @@ export default async function handler(req, res) {
       const data = JSON.parse(stdout);
 
       if (!data.success || !data.result || data.result.length === 0) {
-        return res.status(200).send("⚠️ No data found for this adhar");
+        return res.status(200).send("⚠️ No data found for this Aadhar");
       }
 
       // Take first result only
