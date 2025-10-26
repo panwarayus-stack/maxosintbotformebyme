@@ -3,12 +3,26 @@
   "builds": [
     { "src": "index.html", "use": "@vercel/static" },
     { "src": "num.html", "use": "@vercel/static" },
+    { "src": "adhar.html", "use": "@vercel/static" },
+    { "src": "upi.html", "use": "@vercel/static" },
+    { "src": "vehicle.html", "use": "@vercel/static" },
+    { "src": "imei.html", "use": "@vercel/static" },
+    { "src": "pincode.html", "use": "@vercel/static" },
+    { "src": "ip.html", "use": "@vercel/static" },
+    { "src": "ifsc.html", "use": "@vercel/static" },
     { "src": "osint.html", "use": "@vercel/static" },
     { "src": "api/fetchData.js", "use": "@vercel/node" }
   ],
   "routes": [
     { "src": "/", "dest": "/index.html" },
     { "src": "/num", "dest": "/num.html" },
+    { "src": "/adhar", "dest": "/adhar.html" },
+    { "src": "/upi", "dest": "/upi.html" },
+    { "src": "/vehicle", "dest": "/vehicle.html" },
+    { "src": "/imei", "dest": "/imei.html" },
+    { "src": "/pincode", "dest": "/pincode.html" },
+    { "src": "/ip", "dest": "/ip.html" },
+    { "src": "/ifsc", "dest": "/ifsc.html" },
     { "src": "/osint", "dest": "/osint.html" },
     { "src": "/api/fetchData", "dest": "/api/fetchData.js" }
   ]
