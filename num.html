@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NUMBER INFO</title>
+  <title>NUMBER INFO | BY MR WEIRDO</title>
   <style>
     body {
       background: #000;
@@ -102,11 +102,12 @@
       resBox.classList.add("loading");
 
       try {
-        const res = await fetch(`/api/numdata.js?number=${number}`);
-        const data = await res.text(); // <-- use text() instead of json()
+        // ✅ Corrected endpoint (no .js in URL)
+        const res = await fetch(`/api/numdata?number=${number}`);
+        const data = await res.text();
 
         resBox.classList.remove("loading");
-        resBox.textContent = data; // directly display plain text
+        resBox.textContent = data;
       } catch (err) {
         resBox.classList.remove("loading");
         resBox.textContent = "❌ Error: " + err.message;
