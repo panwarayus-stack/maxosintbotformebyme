@@ -11,7 +11,7 @@
     { "src": "ip.html", "use": "@vercel/static" },
     { "src": "ifsc.html", "use": "@vercel/static" },
     { "src": "osint.html", "use": "@vercel/static" },
-    { "src": "api/fetchData.js", "use": "@vercel/node" }
+    { "src": "api/numdata.js", "use": "@vercel/node" }
   ],
   "routes": [
     { "src": "/", "dest": "/index.html" },
@@ -24,6 +24,6 @@
     { "src": "/ip", "dest": "/ip.html" },
     { "src": "/ifsc", "dest": "/ifsc.html" },
     { "src": "/osint", "dest": "/osint.html" },
-    { "src": "/api/fetchData", "dest": "/api/fetchData.js" }
+    { "src": "/api/numdata", "dest": "/api/numdata.js" }
   ]
 }
