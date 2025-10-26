@@ -1,39 +1,48 @@
-import fetch from "node-fetch";
+const { exec } = require("child_process");
 
-export default async function handler(req, res){
+export default async function handler(req, res) {
   const imei = req.query.imei;
-  if(!imei) return res.status(400).send("❌ Missing ?imei= parameter");
+  if (!imei) return res.status(400).send("❌ Missing ?imei= parameter");
 
-  const API_KEY = "92a6c86b-6d99-41bc-aff7-766912f81cb0";
-  const url = `https://api.imei.info/v1/lookup?api_key=${API_KEY}&imei=${imei}`;
+  const curlCmd = `curl -s "https://osintx.info/API/imei.php?key=EDWARD&term=${imei}"`;
 
-  try{
-    const r = await fetch(url);
-    if(!r.ok) return res.status(500).send(`❌ API Error: ${r.statusText}`);
-    const json = await r.json();
+  exec(curlCmd, (error, stdout, stderr) => {
+    if (error) return res.status(500).send(`❌ Error: ${error.message}`);
+    if (stderr) return res.status(500).send(`❌ Stderr: ${stderr}`);
 
-    if(!json.success) return res.status(200).send("⚠️ No data found for this IMEI");
+    try {
+      const data = JSON.parse(stdout);
 
-    const d = json.data || {};
+      if (!data.result || !data.result.header) {
+        return res.status(200).send("⚠️ No data found for this IMEI");
+      }
 
-    // formatted output
-    const output = `
-IMEI: ${d.imei || "-"}
-Brand: ${d.brand || "-"}
-Model: ${d.model || "-"}
-Manufacturer: ${d.manufacturer || "-"}
-Device Type: ${d.device_type || "-"}
-OS: ${d.os || "-"}
-Color: ${d.color || "-"}
-Status: ${d.status || "-"}
-Carrier: ${d.carrier || "-"}
-Purchase Date: ${d.purchase_date || "-"}
-    `.trim();
+      const header = data.result.header;
+      const items = data.result.items;
 
-    res.setHeader("Content-Type", "text/plain");
-    res.status(200).send(output);
+      let output = `
+📱 Brand: ${header.brand || "-"}
+📲 Model: ${header.model || "-"}
+🔢 IMEI: ${header.imei || "-"}
+`;
 
-  }catch(e){
-    res.status(500).send("❌ Fetch error: "+e.message);
-  }
+      if (header.photo) {
+        output += `<img class="phone-img" src="${header.photo}" alt="Phone Image"/>\n`;
+      }
+
+      items.forEach(i => {
+        if (i.role === "header") {
+          output += `\n🟢 ${i.title}\n`;
+        } else if (i.role === "item") {
+          output += `• ${i.title}: ${i.content || "-"}\n`;
+        }
+      });
+
+      res.setHeader("Content-Type", "text/html");
+      res.status(200).send(output);
+
+    } catch (e) {
+      res.status(500).send("❌ Invalid JSON from API");
+    }
+  });
 }
