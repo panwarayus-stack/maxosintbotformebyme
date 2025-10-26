@@ -1,62 +1,37 @@
-async function lookup() {
-  const gstin = document.getElementById('gstin').value.trim();
-  const resBox = document.getElementById('result');
+import fetch from 'node-fetch';
+
+export default async function handler(req, res) {
+  const gstin = req.query.gstin;
 
   if (!gstin) {
-    alert("⚠️ Please enter a GSTIN");
-    return;
+    return res.status(400).send("❌ Missing ?gstin= parameter");
   }
 
-  resBox.textContent = "⏳ Fetching data...";
-  resBox.classList.add("loading");
-
   try {
-    // Fetch data from GSTINCheck.co.in API
-    const gstinCheckRes = await fetch(`https://gstincheck.co.in/api/validate?gstin=${gstin}`);
-    const gstinCheckData = await gstinCheckRes.json();
+    // Fetch data from the first free API
+    const api1 = await fetch(`https://www.trackgst.com/api/gstin/${gstin}`);
+    const data1 = await api1.json();
 
-    // Fetch data from Cashfree GSTIN Verification API
-    const cashfreeRes = await fetch(`https://api.cashfree.com/verification/gstin`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-client-id': '<your-client-id>',
-        'x-client-secret': '<your-client-secret>'
-      },
-      body: JSON.stringify({ GSTIN: gstin })
-    });
-    const cashfreeData = await cashfreeRes.json();
+    // Fetch data from the second free API
+    const api2 = await fetch(`https://api.gstcheck.co.in/gstin/${gstin}`);
+    const data2 = await api2.json();
 
-    // Fetch data from Jamku GST Return Status API
-    const jamkuRes = await fetch(`https://gst-return-status.p.rapidapi.com/free/gstin/${gstin}`, {
-      method: 'GET',
-      headers: {
-        'x-rapidapi-key': '<your-rapidapi-key>',
-        'x-rapidapi-host': 'gst-return-status.p.rapidapi.com'
-      }
-    });
-    const jamkuData = await jamkuRes.json();
+    // Combine data from both APIs
+    const output = `
+🧾 GSTIN Info: ${gstin}
+🏢 Name: ${data1.tradeName || data2.tradeName || "-"}
+🌍 State: ${data1.state || data2.state || "-"}
+📅 Registration Date: ${data1.registrationDate || data2.registrationDate || "-"}
+✅ Status: ${data1.status || data2.status || "-"}
+📝 Constitution: ${data1.constitution || data2.constitution || "-"}
+📌 PAN: ${data1.pan || data2.pan || "-"}
+🔗 Jurisdiction: ${data1.jurisdiction || data2.jurisdiction || "-"}
+    `.trim();
 
-    // Combine and display the data
-    const combinedData = {
-      "GSTIN": gstin,
-      "Legal Name": gstinCheckData.data.lgnm,
-      "Business Constitution": gstinCheckData.data.ctb,
-      "State Jurisdiction": gstinCheckData.data.stj,
-      "Registration Date": gstinCheckData.data.rgdt,
-      "GST Status": gstinCheckData.data.sts,
-      "Return Filing Status": jamkuData.data.sts,
-      "Trade Name": jamkuData.data.tradeName,
-      "HSN Codes": jamkuData.data.hsn.join(', '),
-      "Taxpayer Type": jamkuData.data.dty,
-      "PAN": jamkuData.data.pan,
-      "GSTIN Status": cashfreeData.status
-    };
+    res.setHeader("Content-Type", "text/plain");
+    res.status(200).send(output);
 
-    resBox.classList.remove("loading");
-    resBox.textContent = JSON.stringify(combinedData, null, 2);
   } catch (err) {
-    resBox.classList.remove("loading");
-    resBox.textContent = "❌ Error: " + err.message;
+    res.status(500).send("❌ Error fetching GST info: " + err.message);
   }
 }
