@@ -45,7 +45,7 @@ async function lookup(){
   copy.style.display = 'none';
 
   try{
-    const res = await fetch(`/api/pincode?pin=${encodeURIComponent(pin)}`);
+    const res = await fetch(`/api/pincodedata?pin=${encodeURIComponent(pin)}`);
     const txt = await res.text();
     out.classList.remove('loading');
     out.textContent = txt;
