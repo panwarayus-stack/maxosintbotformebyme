@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>IP INFO | BY MR WEIRDO</title>
+  <style>
+    body{
+      background:#000;color:#00eaff;font-family:monospace;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      min-height:100vh;margin:0;padding:20px;
+    }
+    h1{font-size:1.8rem;margin-bottom:18px;text-shadow:0 0 12px #00eaff}
+    .box{background:#111;padding:18px;border-radius:10px;box-shadow:0 0 15px #00eaff;width:100%;max-width:680px;text-align:center}
+    input{width:72%;padding:10px;border-radius:6px;border:none;font-size:15px;text-align:center;background:#000;color:#00eaff;outline:none}
+    button{padding:10px 18px;margin-top:12px;border-radius:6px;border:none;background:#00eaff;color:#000;font-weight:700;cursor:pointer}
+    button:hover{background:#00bcd4}
+    pre{white-space:pre-wrap;word-break:break-word;text-align:left;background:#000;padding:14px;border-radius:8px;margin-top:14px;max-height:340px;overflow:auto;box-shadow:inset 0 0 10px #00eaff}
+    .small{font-size:13px;color:#9fe8ff;margin-top:8px}
+    .copy-btn{margin-top:10px;padding:8px 12px;border-radius:6px;border:none;background:#00eaff;color:#000;cursor:pointer;display:none}
+    .loading{animation:blink 1s infinite alternate}
+    @keyframes blink{from{opacity:.35}to{opacity:1}}
+  </style>
+</head>
+<body>
+  <h1>🌐 IP INFO — BY MR WEIRDO</h1>
+  <div class="box">
+    <input id="ip" placeholder="Enter IP (e.g. 8.8.8.8) or leave blank for client IP" />
+    <br>
+    <button onclick="lookup()">🔍 Lookup</button>
+    <div class="small">Tip: leave empty to look up visitor IP (server-side).</div>
+    <pre id="result">Result will appear here...</pre>
+    <button id="copyBtn" class="copy-btn" onclick="copyResult()">📋 Copy Data</button>
+  </div>
+
+<script>
+async function lookup(){
+  const ip = document.getElementById('ip').value.trim();
+  const resBox = document.getElementById('result');
+  const copyBtn = document.getElementById('copyBtn');
+
+  resBox.textContent = '⏳ Fetching data...';
+  resBox.classList.add('loading');
+  copyBtn.style.display = 'none';
+
+  try {
+    // call your serverless endpoint
+    const url = ip ? `/api/ipdata?ip=${encodeURIComponent(ip)}` : `/api/ipdata`;
+    const r = await fetch(url);
+    const txt = await r.text();
+
+    resBox.classList.remove('loading');
+    resBox.textContent = txt;
+    if (r.ok && txt && !txt.startsWith('❌') && !txt.startsWith('⚠️')) {
+      copyBtn.style.display = 'inline-block';
+    } else {
+      copyBtn.style.display = 'none';
+    }
+  } catch (err) {
+    resBox.classList.remove('loading');
+    resBox.textContent = '❌ Error: ' + err.message;
+    copyBtn.style.display = 'none';
+  }
+}
+
+function copyResult(){
+  const t = document.getElementById('result').innerText;
+  navigator.clipboard.writeText(t).then(()=> alert('✅ Data copied to clipboard'));
+}
+</script>
+</body>
+</html>
