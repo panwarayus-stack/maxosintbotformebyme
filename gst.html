@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>📊 GSTIN Info - By Mr. Weirdo</title>
+  <title>GST INFO - BY MR WEIRDO</title>
   <style>
     body {
       background: #000;
@@ -61,7 +61,7 @@
       padding: 15px;
       border-radius: 8px;
       overflow-x: auto;
-      max-height: 300px;
+      max-height: 400px;
       margin-top: 20px;
       font-size: 14px;
       box-shadow: inset 0 0 10px #00eaff;
@@ -82,14 +82,38 @@
   </style>
 </head>
 <body>
-  <h1>📊 GSTIN Info - By Mr. Weirdo</h1>
+  <h1>🧾 GST INFO - BY MR WEIRDO</h1>
   <div class="box">
-    <input type="text" id="gstin" placeholder="Enter GSTIN e.g. 29AAICP2912R1ZR" />
+    <input type="text" id="gstin" placeholder="Enter GSTIN e.g. 27AAEPM1234C1ZV" />
     <br>
     <button onclick="lookup()">🔍 Lookup</button>
     <pre id="result">Result will appear here...</pre>
   </div>
 
-  <script src="gstdata.js"></script>
+  <script>
+    async function lookup() {
+      const gstin = document.getElementById('gstin').value.trim();
+      const resBox = document.getElementById('result');
+
+      if (!gstin) {
+        alert("⚠️ Please enter a GSTIN");
+        return;
+      }
+
+      resBox.textContent = "⏳ Fetching GST info...";
+      resBox.classList.add("loading");
+
+      try {
+        const res = await fetch(`/api/gstdata?gstin=${gstin}`);
+        const data = await res.text();
+
+        resBox.classList.remove("loading");
+        resBox.textContent = data;
+      } catch (err) {
+        resBox.classList.remove("loading");
+        resBox.textContent = "❌ Error: " + err.message;
+      }
+    }
+  </script>
 </body>
 </html>
