@@ -102,7 +102,7 @@
       resBox.classList.add("loading");
 
       try {
-        const res = await fetch(`/api/fetchData?number=${number}`);
+        const res = await fetch(`/api/numdata?number=${number}`);
         const data = await res.text(); // <-- use text() instead of json()
 
         resBox.classList.remove("loading");
