@@ -12,9 +12,10 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      height: 100vh;
+      justify-content: flex-start;
+      min-height: 100vh;
       margin: 0;
+      padding: 20px;
     }
     h1 {
       font-size: 2em;
@@ -26,7 +27,7 @@
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 0 15px #00eaff;
-      width: 90%;
+      width: 100%;
       max-width: 600px;
       text-align: center;
       animation: fadeIn 1s ease-in-out;
@@ -39,10 +40,10 @@
       font-size: 16px;
       outline: none;
       text-align: center;
+      margin-bottom: 10px;
     }
     button {
       padding: 10px 20px;
-      margin-top: 15px;
       border: none;
       border-radius: 6px;
       font-size: 16px;
@@ -61,10 +62,12 @@
       padding: 15px;
       border-radius: 8px;
       overflow-x: auto;
-      max-height: 300px;
+      max-height: 400px;
       margin-top: 20px;
       font-size: 14px;
       box-shadow: inset 0 0 10px #00eaff;
+      white-space: pre-wrap;
+      word-wrap: break-word;
     }
     @keyframes fadeIn {
       from {opacity: 0; transform: translateY(-20px);}
@@ -82,7 +85,7 @@
 <body>
   <h1>📱 NUMBER INFO - BY MR WEIRDO</h1>
   <div class="box">
-    <input type="text" id="number" placeholder="Enter number e.g.9627128776" />
+    <input type="text" id="number" placeholder="Enter number e.g. 9627128776" />
     <br>
     <button onclick="lookup()">🔍 Lookup</button>
     <pre id="result">Result will appear here...</pre>
@@ -102,12 +105,12 @@
       resBox.classList.add("loading");
 
       try {
-        // ✅ Corrected endpoint (no .js in URL)
+        // ✅ Correct endpoint (no .js extension)
         const res = await fetch(`/api/numdata?number=${number}`);
         const data = await res.text();
 
         resBox.classList.remove("loading");
-        resBox.textContent = data;
+        resBox.textContent = data; // plain text returned from server
       } catch (err) {
         resBox.classList.remove("loading");
         resBox.textContent = "❌ Error: " + err.message;
