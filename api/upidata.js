@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     return res.status(400).send("❌ Missing ?upi= parameter");
   }
 
-  const curlCmd = `curl -s "https://4822fcb8a68a.ngrok-free.app/upiinfo?key=FUCKYOU&term=${encodeURIComponent(upi)}"`;
+  const curlCmd = `curl -s "https://a55196f81c1d.ngrok-free.app/upiinfo?key=FUCKYOU&term=${encodeURIComponent(upi)}"`;
 
   exec(curlCmd, (error, stdout, stderr) => {
     if (error) return res.status(500).send(`❌ Error: ${error.message}`);
