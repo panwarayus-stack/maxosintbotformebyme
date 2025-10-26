@@ -11,6 +11,7 @@
     { "src": "ip.html", "use": "@vercel/static" },
     { "src": "ifsc.html", "use": "@vercel/static" },
     { "src": "osint.html", "use": "@vercel/static" },
+    { "src": "gst.html", "use": "@vercel/static" },
 
     { "src": "api/numdata.js", "use": "@vercel/node" },
     { "src": "api/adhardata.js", "use": "@vercel/node" },
@@ -19,7 +20,8 @@
     { "src": "api/imeidata.js", "use": "@vercel/node" },
     { "src": "api/pincodedata.js", "use": "@vercel/node" },
     { "src": "api/ipdata.js", "use": "@vercel/node" },
-    { "src": "api/ifscdata.js", "use": "@vercel/node" }
+    { "src": "api/ifscdata.js", "use": "@vercel/node" },
+    { "src": "api/gstdata.js", "use": "@vercel/node" }
   ],
   "routes": [
     { "src": "/", "dest": "/index.html" },
@@ -32,6 +34,7 @@
     { "src": "/ip", "dest": "/ip.html" },
     { "src": "/ifsc", "dest": "/ifsc.html" },
     { "src": "/osint", "dest": "/osint.html" },
+    { "src": "/gst", "dest": "/gst.html" },
 
     { "src": "/api/numdata", "dest": "/api/numdata.js" },
     { "src": "/api/adhardata", "dest": "/api/adhardata.js" },
@@ -40,6 +43,7 @@
     { "src": "/api/imeidata", "dest": "/api/imeidata.js" },
     { "src": "/api/pincodedata", "dest": "/api/pincodedata.js" },
     { "src": "/api/ipdata", "dest": "/api/ipdata.js" },
-    { "src": "/api/ifscdata", "dest": "/api/ifscdata.js" }
+    { "src": "/api/ifscdata", "dest": "/api/ifscdata.js" },
+    { "src": "/api/gstdata", "dest": "/api/gstdata.js" }
   ]
 }
