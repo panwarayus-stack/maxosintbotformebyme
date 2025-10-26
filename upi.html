@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UPI INFO</title>
+  <style>
+    body {
+      background: #000;
+      color: #00eaff;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+      text-shadow: 0 0 15px #00eaff;
+      text-align: center;
+    }
+    .box {
+      background: #111;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px #00eaff;
+      width: 90%;
+      max-width: 600px;
+      text-align: center;
+      animation: fadeIn 1s ease-in-out;
+    }
+    input {
+      width: 70%;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      outline: none;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      background: #00eaff;
+      color: #000;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #00bcd4;
+    }
+    pre {
+      text-align: left;
+      background: #000;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      max-height: 300px;
+      margin-top: 20px;
+      font-size: 14px;
+      box-shadow: inset 0 0 10px #00eaff;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(-20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+    .loading {
+      animation: blink 1s infinite alternate;
+    }
+    @keyframes blink {
+      from {opacity: 0.3;}
+      to {opacity: 1;}
+    }
+  </style>
+</head>
+<body>
+  <h1>💰 UPI INFO - BY MR WEIRDO</h1>
+  <div class="box">
+    <input type="text" id="upiId" placeholder="Enter UPI ID e.g. sarita.panwar@ptyes" />
+    <br>
+    <button onclick="lookup()">🔍 Lookup</button>
+    <pre id="result">Result will appear here...</pre>
+    <button id="copyBtn" style="display:none; margin-top:10px;" onclick="copyData()">📋 Copy Data</button>
+  </div>
+
+  <script>
+    async function lookup() {
+      const upi = document.getElementById('upiId').value.trim();
+      const resBox = document.getElementById('result');
+      const copyBtn = document.getElementById('copyBtn');
+
+      if (!upi) {
+        alert("⚠️ Please enter a UPI ID");
+        return;
+      }
+
+      resBox.textContent = "⏳ Fetching data...";
+      resBox.classList.add("loading");
+      copyBtn.style.display = "none";
+
+      try {
+        const res = await fetch(`/api/upidata?upi=${encodeURIComponent(upi)}`);
+        const data = await res.text();
+
+        resBox.classList.remove("loading");
+        resBox.textContent = data;
+        copyBtn.style.display = "inline-block";
+      } catch (err) {
+        resBox.classList.remove("loading");
+        resBox.textContent = "❌ Error: " + err.message;
+      }
+    }
+
+    function copyData() {
+      const resBox = document.getElementById('result');
+      navigator.clipboard.writeText(resBox.textContent);
+      alert("✅ Data copied to clipboard!");
+    }
+  </script>
+</body>
+</html>
