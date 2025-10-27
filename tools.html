@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>MR WEIRDOO — Tools</title>
+<style>
+:root{
+  --bg:#020204;
+  --panel:#0b1008;
+  --neon:#00ff7f;
+  --neon-2:#00c174;
+  --muted:#7fae8a;
+  --glass: rgba(0,0,0,0.35);
+  --card-border: rgba(0,255,127,0.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,"Roboto Mono",monospace;background:linear-gradient(180deg,var(--bg),#07120a);color:#dfffe0;overflow-x:hidden}
+.container{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+/* main card */
+.card{width:100%;max-width:1100px;background:linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.32));border:1px solid var(--card-border);backdrop-filter: blur(6px);box-shadow:0 30px 90px rgba(0,0,0,0.7);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:14px}
+/* header */
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.title{font-size:20px;color:var(--neon-2);font-weight:800;letter-spacing:1px}
+.subtitle{font-size:12px;color:var(--muted)}
+/* grid of buttons */
+.toolsGrid{display:grid;gap:12px}
+/* responsive: mobile 1 col, tablet 2, desktop 4 */
+@media (max-width:599px){ .toolsGrid { grid-template-columns: 1fr; } }
+@media (min-width:600px) and (max-width:899px){ .toolsGrid { grid-template-columns: repeat(2,1fr); } }
+@media (min-width:900px){ .toolsGrid { grid-template-columns: repeat(4,1fr); } }
+
+.toolBtn{
+  display:flex;align-items:center;justify-content:center;padding:18px;border-radius:10px;background:linear-gradient(90deg, rgba(0,255,127,0.08), rgba(0,193,116,0.06));border:1px solid rgba(0,255,127,0.06);color:#021005;font-weight:800;text-decoration:none;cursor:pointer;transition:transform .14s, box-shadow .14s;
+  min-height:64px;text-align:center;
+}
+.toolBtn:hover{ transform:translateY(-6px); box-shadow:0 8px 30px rgba(0,255,127,0.06) }
+.toolLabel{color:var(--neon);font-weight:800}
+
+/* footer area */
+.foot{display:flex;align-items:center;justify-content:space-between;margin-top:6px;gap:8px}
+.info{font-size:12px;color:var(--muted)}
+/* small subtle admin dot at bottom-right (also trademark line) */
+.trademarkWrap{position:fixed;right:18px;bottom:10px;z-index:9999;display:flex;align-items:center;gap:8px;pointer-events:auto}
+.trademark{font-size:12px;color:var(--muted);opacity:0.95}
+.adminDot{
+  width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+  background:transparent;color:var(--muted);font-size:12px;cursor:pointer;border:1px solid rgba(255,255,255,0.02);
+  padding-bottom:1px;
+}
+/* admin dot hover gives tiny glow */
+.adminDot:hover{box-shadow:0 0 8px rgba(0,255,127,0.12); color:var(--neon)}
+
+/* admin modal (login) */
+.modalWrap{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:10000;padding:18px}
+.modal{width:100%;max-width:420px;background:linear-gradient(180deg, rgba(0,0,0,0.7), rgba(0,0,0,0.45));border-radius:10px;padding:16px;border:1px solid rgba(0,255,127,0.06)}
+.modal h3{margin-bottom:8px;color:var(--neon)}
+.row{margin-bottom:10px;display:flex;flex-direction:column;gap:6px}
+.input{padding:10px;border-radius:6px;border:1px solid rgba(0,255,127,0.06);background:rgba(0,0,0,0.25);color:var(--neon);outline:none;font-family:inherit}
+.btn{padding:8px 12px;border-radius:6px;border:none;background:var(--neon);color:#021005;font-weight:800;cursor:pointer}
+
+/* admin panel area inside same page (hidden by default) */
+.adminPanel{display:none;margin-top:12px;border-radius:8px;padding:12px;background:linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.02));border:1px solid rgba(0,255,127,0.04)}
+.adminPanel h4{color:var(--neon);margin-bottom:8px}
+.toolsList{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow:auto;padding-right:6px}
+.toolRow{display:flex;gap:8px;align-items:center}
+.toolRow .name{flex:1;color:#bfffd1;font-weight:700}
+.toolRow .link{font-size:12px;color:var(--muted);max-width:40%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toolRow .smallBtn{padding:6px 8px;border-radius:6px;border:1px solid rgba(0,255,127,0.06);background:transparent;color:var(--neon);cursor:pointer}
+
+/* add form */
+.addForm{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.addForm input{flex:1;min-width:160px}
+.smallMuted{font-size:12px;color:var(--muted);margin-top:8px}
+
+/* subtle help */
+.hint{font-size:12px;color:var(--muted)}
+
+/* accessibility focus outlines */
+:focus{outline:3px solid rgba(0,255,127,0.06);outline-offset:2px}
+
+/* tiny responsive tweaks */
+@media (max-width:500px){
+  .adminPanel{padding:10px}
+  .toolBtn{padding:14px}
+  .title{font-size:18px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="card" role="main" aria-live="polite">
+    <div class="header">
+      <div>
+        <div class="title">MR WEIRDO — Tools</div>
+        <div class="subtitle">Quick OSINT redirects — click a tile to open</div>
+      </div>
+      <div class="hint">Admin: hidden • tools stored locally</div>
+    </div>
+
+    <!-- Tools grid -->
+    <div id="toolsGrid" class="toolsGrid" role="list" aria-label="tools list"></div>
+
+    <!-- admin panel (hidden until login) -->
+    <div id="adminPanel" class="adminPanel" aria-hidden="true">
+      <h4>🔧 Admin Panel</h4>
+
+      <div class="toolsList" id="toolsList" role="list" aria-label="manage tools"></div>
+
+      <div class="addForm" aria-label="add tool form">
+        <input id="newName" class="input" placeholder="Tool name (e.g. OSINT Tools)" aria-label="Tool name">
+        <input id="newHref" class="input" placeholder="Link (e.g. /osint)" aria-label="Tool link">
+        <button id="addBtn" class="btn">Add</button>
+      </div>
+
+      <div class="smallMuted">Changes persist in this browser (localStorage). Use admin logout to hide panel.</div>
+
+      <div style="margin-top:10px;display:flex;gap:8px;">
+        <button id="exportBtn" class="smallBtn">Export JSON</button>
+        <button id="importBtn" class="smallBtn">Import JSON</button>
+        <button id="logoutBtn" class="smallBtn">Logout</button>
+      </div>
+    </div>
+
+    <div class="foot">
+      <div class="info">Tip: Click the small dot at bottom-right to open admin login.</div>
+      <div class="info">Responsive: mobile 1 per line — desktop 4 per row</div>
+    </div>
+  </div>
+</div>
+
+<!-- trademark + admin dot -->
+<div class="trademarkWrap" aria-hidden="false">
+  <div class="trademark">Copyright reserved 2025 MR WEIRDOO ©</div>
+  <button id="adminDot" class="adminDot" title="admin" aria-label="admin login">•</button>
+</div>
+
+<!-- admin modal (login) -->
+<div id="modalWrap" class="modalWrap" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal" role="document" aria-labelledby="modalTitle">
+    <h3 id="modalTitle">Admin Login</h3>
+    <div class="row">
+      <label class="muted">Username</label>
+      <input id="adminUser" class="input" autocomplete="username" />
+    </div>
+    <div class="row">
+      <label class="muted">Password</label>
+      <input id="adminPass" type="password" class="input" autocomplete="current-password" />
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px">
+      <button id="modalCancel" class="btn" style="background:transparent;color:var(--neon);border:1px solid rgba(0,255,127,0.06)">Cancel</button>
+      <button id="modalOk" class="btn">Login</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/*
+  Single-file Tools manager with hidden admin.
+  Default admin credentials (change below in constants):
+    username: admin
+    password: weirdo123
+  Tools stored in localStorage under key 'mr_tools_v1'
+*/
+
+// ======= CONFIG =======
+const STORAGE_KEY = 'mr_tools_v1';
+const ADMIN_USERNAME = 'admin';      // change if you want
+const ADMIN_PASSWORD = 'weirdo123';  // change if you want
+// =======================
+
+// default tools (preloaded)
+const DEFAULT_TOOLS = [
+  { name: 'OSINT Tools', href: '/osint.html' }
+];
+
+// DOM nodes
+const toolsGrid = document.getElementById('toolsGrid');
+const adminDot = document.getElementById('adminDot');
+const modalWrap = document.getElementById('modalWrap');
+const modalOk = document.getElementById('modalOk');
+const modalCancel = document.getElementById('modalCancel');
+const adminUser = document.getElementById('adminUser');
+const adminPass = document.getElementById('adminPass');
+const adminPanel = document.getElementById('adminPanel');
+const toolsList = document.getElementById('toolsList');
+const addBtn = document.getElementById('addBtn');
+const newName = document.getElementById('newName');
+const newHref = document.getElementById('newHref');
+const logoutBtn = document.getElementById('logoutBtn');
+const exportBtn = document.getElementById('exportBtn');
+const importBtn = document.getElementById('importBtn');
+
+// state
+let tools = [];
+let isAdmin = false;
+let editingIndex = -1;
+
+// helpers
+function loadTools(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      tools = JSON.parse(raw);
+    } else {
+      tools = DEFAULT_TOOLS.slice();
+      saveTools();
+    }
+  } catch(e){
+    tools = DEFAULT_TOOLS.slice();
+    saveTools();
+  }
+}
+function saveTools(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tools));
+}
+function renderGrid(){
+  toolsGrid.innerHTML = '';
+  tools.forEach((t, idx) => {
+    const a = document.createElement('a');
+    a.href = t.href || '#';
+    a.className = 'toolBtn';
+    a.setAttribute('role','listitem');
+    a.setAttribute('aria-label', t.name);
+    a.innerHTML = `<div class="toolLabel">${escapeHtml(t.name)}</div>`;
+    // open in same tab; allow ctrl/meta to open new if user wants
+    a.addEventListener('click', (e) => {
+      // keep normal behaviour (navigation)
+    });
+    toolsGrid.appendChild(a);
+  });
+}
+function renderAdminList(){
+  toolsList.innerHTML = '';
+  tools.forEach((t, idx) => {
+    const row = document.createElement('div');
+    row.className = 'toolRow';
+    row.innerHTML = `
+      <div class="name">${escapeHtml(t.name)}</div>
+      <div class="link" title="${escapeHtml(t.href)}">${escapeHtml(t.href)}</div>
+      <button class="smallBtn editBtn" data-i="${idx}">Edit</button>
+      <button class="smallBtn delBtn" data-i="${idx}">Remove</button>
+    `;
+    toolsList.appendChild(row);
+  });
+  // wire buttons
+  Array.from(document.getElementsByClassName('editBtn')).forEach(b=>{
+    b.addEventListener('click', (e)=>{
+      const i = Number(b.getAttribute('data-i'));
+      enterEdit(i);
+    });
+  });
+  Array.from(document.getElementsByClassName('delBtn')).forEach(b=>{
+    b.addEventListener('click', (e)=>{
+      const i = Number(b.getAttribute('data-i'));
+      if(confirm('Remove tool "'+tools[i].name+'"?')) {
+        tools.splice(i,1); saveAndRefresh();
+      }
+    });
+  });
+}
+
+function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function saveAndRefresh(){
+  saveTools();
+  renderGrid();
+  renderAdminList();
+}
+
+function enterEdit(i){
+  editingIndex = i;
+  newName.value = tools[i].name;
+  newHref.value = tools[i].href;
+  addBtn.textContent = 'Save';
+  newName.focus();
+}
+
+// add / save
+addBtn.addEventListener('click', ()=>{
+  const name = newName.value.trim();
+  const href = newHref.value.trim();
+  if(!name || !href){ alert('Provide name and link'); return; }
+  if(editingIndex >= 0){
+    tools[editingIndex] = { name, href };
+    editingIndex = -1;
+    addBtn.textContent = 'Add';
+  } else {
+    tools.push({ name, href });
+  }
+  newName.value = ''; newHref.value = '';
+  saveAndRefresh();
+});
+
+// logout
+logoutBtn.addEventListener('click', ()=>{
+  isAdmin = false;
+  adminPanel.style.display = 'none';
+  adminPanel.setAttribute('aria-hidden','true');
+  // hide modal if any
+  modalWrap.style.display = 'none';
+  // remove admin flag from sessionStorage
+  sessionStorage.removeItem('mr_admin');
+  renderGrid();
+  alert('Logged out');
+});
+
+// export/import
+exportBtn.addEventListener('click', ()=>{
+  const data = JSON.stringify(tools, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'mr_tools_export.json'; a.click();
+  URL.revokeObjectURL(url);
+});
+importBtn.addEventListener('click', ()=>{
+  const txt = prompt('Paste JSON array of tools ( [{name:"x",href:"/x"} ] ):');
+  if(!txt) return;
+  try{
+    const arr = JSON.parse(txt);
+    if(Array.isArray(arr)){
+      tools = arr.map(x=>({ name: String(x.name||''), href: String(x.href||'') }));
+      saveAndRefresh();
+      alert('Imported');
+    } else alert('Invalid JSON array');
+  } catch(e){ alert('Invalid JSON'); }
+});
+
+// admin dot click -> show modal
+adminDot.addEventListener('click', (e)=>{
+  modalWrap.style.display = 'flex';
+  modalWrap.setAttribute('aria-hidden','false');
+  adminUser.value = ''; adminPass.value = '';
+  setTimeout(()=> adminUser.focus(), 120);
+});
+
+// modal cancel
+modalCancel.addEventListener('click', ()=>{
+  modalWrap.style.display = 'none';
+  modalWrap.setAttribute('aria-hidden','true');
+});
+
+// modal ok -> validate
+modalOk.addEventListener('click', doLogin);
+adminPass.addEventListener('keydown', (e)=> { if(e.key === 'Enter') doLogin(); });
+
+// login handler
+function doLogin(){
+  const u = String(adminUser.value||'').trim();
+  const p = String(adminPass.value||'').trim();
+  if(u === ADMIN_USERNAME && p === ADMIN_PASSWORD){
+    isAdmin = true;
+    sessionStorage.setItem('mr_admin','1');
+    modalWrap.style.display = 'none';
+    modalWrap.setAttribute('aria-hidden','true');
+    showAdminPanel();
+    return;
+  }
+  alert('Invalid credentials');
+}
+
+// check session on load
+function checkAdminSession(){
+  const s = sessionStorage.getItem('mr_admin');
+  if(s === '1'){ isAdmin = true; showAdminPanel(); }
+}
+
+// show admin area
+function showAdminPanel(){
+  adminPanel.style.display = 'block';
+  adminPanel.setAttribute('aria-hidden','false');
+  renderAdminList();
+}
+
+// initial boot
+loadTools();
+renderGrid();
+checkAdminSession();
+
+// keyboard shortcut: Ctrl+Shift+A opens admin modal (extra way)
+document.addEventListener('keydown', (e)=>{
+  if(e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+    adminDot.click();
+  }
+});
+
+// accessibility: close modal on esc
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape') {
+    modalWrap.style.display = 'none';
+    modalWrap.setAttribute('aria-hidden','true');
+  }
+});
+</script>
+</body>
+</html>
