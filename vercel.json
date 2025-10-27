@@ -12,6 +12,7 @@
     { "src": "ifsc.html", "use": "@vercel/static" },
     { "src": "osint.html", "use": "@vercel/static" },
     { "src": "gst.html", "use": "@vercel/static" },
+    { "src": "tools.html", "use": "@vercel/static" },
 
     { "src": "api/numdata.js", "use": "@vercel/node" },
     { "src": "api/adhardata.js", "use": "@vercel/node" },
@@ -35,6 +36,7 @@
     { "src": "/ifsc", "dest": "/ifsc.html" },
     { "src": "/osint", "dest": "/osint.html" },
     { "src": "/gst", "dest": "/gst.html" },
+    { "src": "/tools", "dest": "/tools.html" },
 
     { "src": "/api/numdata", "dest": "/api/numdata.js" },
     { "src": "/api/adhardata", "dest": "/api/adhardata.js" },
