@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>InfoAPI Admin Panel</title>
+  <style>
+    body { font-family: monospace; background: #111; color: #0f0; text-align: center; padding: 50px; }
+    input, select, button { margin: 5px; padding: 8px; border-radius: 5px; border: none; }
+    input[type="password"], input[type="text"] { width: 200px; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <h2>🧠 InfoAPI Admin Login</h2>
+
+  <div id="login">
+    <input id="user" placeholder="Username"><br>
+    <input id="pass" type="password" placeholder="Password"><br>
+    <input id="scode" placeholder="Security Code"><br>
+    <input id="bmonth" placeholder="Birthday Month"><br>
+    <input id="bdate" placeholder="Birthday Date"><br>
+    <button onclick="login()">Login</button>
+    <p id="msg"></p>
+  </div>
+
+  <div id="panel" class="hidden">
+    <h3>✅ Welcome, Admin!</h3>
+    <select id="cmd">
+      <option>upiinfo</option>
+      <option>vh</option>
+      <option>num</option>
+      <option>adhar</option>
+      <option>imei</option>
+      <option>pak</option>
+      <option>ifsc</option>
+      <option>ip</option>
+      <option>pwned</option>
+      <option>fb</option>
+      <option>tg</option>
+      <option>familyinfo</option>
+      <option>familyinfo2</option>
+      <option>pan</option>
+    </select><br>
+    <input id="term" placeholder="Enter term"><br>
+    <input id="key" placeholder="Enter API key"><br>
+    <button onclick="runApi()">Run API</button>
+    <pre id="output"></pre>
+  </div>
+
+  <script>
+    function login() {
+      const user = document.getElementById("user").value;
+      const pass = document.getElementById("pass").value;
+      const scode = document.getElementById("scode").value;
+      const month = document.getElementById("bmonth").value.toUpperCase();
+      const date = document.getElementById("bdate").value;
+
+      if (
+        user === "IAMMRWEIRDOO" &&
+        pass === "@YUSH098" &&
+        scode === "2011" &&
+        month === "MAY" &&
+        date === "3"
+      ) {
+        document.getElementById("login").classList.add("hidden");
+        document.getElementById("panel").classList.remove("hidden");
+      } else {
+        document.getElementById("msg").innerText = "❌ Invalid credentials";
+      }
+    }
+
+    async function runApi() {
+      const type = document.getElementById("cmd").value;
+      const term = document.getElementById("term").value;
+      const key = document.getElementById("key").value;
+      const url = `/api/api?key=${key}&type=${type}&term=${term}`;
+
+      document.getElementById("output").innerText = "⏳ Loading...";
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        document.getElementById("output").innerText = JSON.stringify(data, null, 2);
+      } catch (e) {
+        document.getElementById("output").innerText = "❌ Error: " + e.message;
+      }
+    }
+  </script>
+</body>
+</html>
