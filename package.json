@@ -1,11 +1,35 @@
 {
-  "name": "telegram-session-generator",
+  "name": "mr-weirdoo-site",
   "version": "1.0.0",
-  "type": "module",
-  "main": "api/sessiongen.js",
+  "description": "Official MR WEIRDOO Website - OSINT, Tools, Telegram Session Generator, SMS Bomber & more.",
+  "main": "api.js",
+  "scripts": {
+    "start": "node api.js",
+    "dev": "nodemon api.js"
+  },
   "dependencies": {
-    "telethon": "^1.31.1",
-    "express": "^4.19.2",
-    "body-parser": "^1.20.3"
-  }
+    "express": "^4.18.2",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "python-shell": "^5.0.0",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=18.x"
+  },
+  "keywords": [
+    "mrweirdoo",
+    "telegram",
+    "osint",
+    "sms-bomber",
+    "email-spoof",
+    "session-generator",
+    "vercel",
+    "tools"
+  ],
+  "author": "MR WEIRDOO",
+  "license": "MIT"
 }
