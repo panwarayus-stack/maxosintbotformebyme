@@ -1,160 +1,297 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Generate Session — MR WEIRDO</title>
-<link rel="stylesheet" href="/sessiongen.css" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Generate Telegram Session — MR WEIRDO</title>
 <style>
-  /* minimal embedded styles so file is standalone */
-  :root{--bg:#020204;--neon:#00ff7f;--muted:#7fae8a}
-  html,body{height:100%;margin:0;font-family:ui-monospace,monospace;background:linear-gradient(180deg,#020204,#07120a);color:#dfffe0}
-  .wrap{max-width:900px;margin:28px auto;padding:18px}
-  .card{background:linear-gradient(180deg,rgba(0,0,0,0.55),rgba(0,0,0,0.35));padding:16px;border-radius:10px;border:1px solid rgba(0,255,127,0.06)}
-  h1{color:var(--neon);margin:0 0 8px;font-size:20px}
-  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-  label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
-  input,select{padding:10px;border-radius:6px;border:1px solid rgba(0,255,127,0.06);background:rgba(0,0,0,0.25);color:var(--neon);min-width:0;flex:1}
-  .actions{display:flex;gap:8px;margin-top:12px}
-  button{background:var(--neon);color:#021005;border:none;padding:10px 12px;border-radius:6px;font-weight:800;cursor:pointer}
-  button.alt{background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--neon)}
-  pre.output{background:#000;padding:12px;border-radius:8px;margin-top:12px;color:var(--neon);white-space:pre-wrap;word-break:break-word;border:1px solid rgba(0,255,127,0.04)}
-  .small{font-size:12px;color:var(--muted);margin-top:8px}
-  .note{font-size:12px;color:#ffd;opacity:0.9}
+  :root{
+    --bg:#020204; --card: rgba(0,0,0,0.55);
+    --neon:#00ff7f; --muted:#86b886;
+    --glass: rgba(0,0,0,0.28);
+  }
+  html,body{height:100%;margin:0;font-family:ui-monospace,monospace;background:linear-gradient(180deg,var(--bg),#07120a);color:#dfffe0}
+  .wrap{max-width:920px;margin:28px auto;padding:18px}
+  .card{background:linear-gradient(180deg,var(--card), rgba(0,0,0,0.35));padding:18px;border-radius:10px;border:1px solid rgba(0,255,127,0.06)}
+  h1{margin:0 0 6px;color:var(--neon);font-size:20px}
+  .hint{color:var(--muted);font-size:13px;margin-bottom:12px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+  input,button,textarea,select{font-family:inherit}
+  input[type=text], input[type=tel], input[type=number], input[type=password], textarea{
+    width:100%;padding:10px;border-radius:6px;border:1px solid rgba(0,255,127,0.06);background:rgba(0,0,0,0.28);color:var(--neon);
+  }
+  .col{flex:1;min-width:180px}
+  .actions{display:flex;gap:8px;align-items:center}
+  button.primary{background:var(--neon);color:#021005;border:none;padding:10px 14px;border-radius:6px;font-weight:800;cursor:pointer}
+  button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--neon);padding:9px 12px;border-radius:6px;cursor:pointer}
+  button[disabled]{opacity:0.5;cursor:not-allowed}
+  .small{font-size:12px;color:var(--muted)}
+  .output{background:#000;padding:12px;border-radius:8px;margin-top:12px;color:var(--neon);white-space:pre-wrap;word-break:break-word;border:1px solid rgba(0,255,127,0.04)}
+  .controls{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+  .note{font-size:12px;color:var(--muted);margin-top:10px}
+  .center{display:flex;align-items:center;gap:10px}
+  .inline{display:inline-block}
+  .status{font-size:13px;color:var(--muted)}
+  .kbd{background:rgba(255,255,255,0.03);padding:2px 6px;border-radius:4px;font-weight:700;color:var(--neon)}
 </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card" role="main" aria-live="polite">
-      <h1>Session Generator</h1>
-      <p class="small">Enter API ID, API Hash and phone number. Click <strong>Generate</strong> to produce a session artifact. This page will try to call <code>/api/generate_session</code> on the server. If the server is unavailable, a local (insecure) fallback session will be produced.</p>
+      <h1>Generate Telegram Session</h1>
+      <div class="hint">Enter API ID, API Hash and phone. Click <span class="kbd">Send Code</span>, then enter the OTP you receive and click <span class="kbd">Verify</span>. The session string will appear below for copying or download.</div>
 
+      <!-- Step 0: Inputs -->
       <div class="row">
-        <div style="flex:1;min-width:160px">
+        <div class="col">
           <label for="apiId">API ID</label>
-          <input id="apiId" type="text" inputmode="numeric" placeholder="e.g. 123456" />
+          <input id="apiId" type="number" inputmode="numeric" placeholder="e.g. 123456" />
         </div>
 
-        <div style="flex:2;min-width:200px">
+        <div class="col" style="flex:2">
           <label for="apiHash">API Hash</label>
-          <input id="apiHash" type="text" placeholder="e.g. abcdef1234567890..." />
+          <input id="apiHash" type="text" placeholder="e.g. abcd1234ef..." />
         </div>
 
-        <div style="flex:1;min-width:160px">
+        <div class="col">
           <label for="phone">Phone (with country code)</label>
-          <input id="phone" type="text" placeholder="+919812345678" />
+          <input id="phone" type="tel" placeholder="+9198..." />
         </div>
       </div>
 
-      <div class="row" style="margin-top:12px">
-        <div style="flex:1;min-width:200px">
-          <label for="ngrok">ngrok auth token (optional)</label>
-          <input id="ngrok" type="text" placeholder="Ngrok authtoken (optional)" />
+      <!-- Start flow -->
+      <div class="row">
+        <div style="min-width:220px">
+          <div class="actions">
+            <button id="sendCodeBtn" class="primary">Send Code</button>
+            <button id="abortBtn" class="ghost" style="display:none">Abort</button>
+            <div id="flowStatus" class="status" style="margin-left:8px"></div>
+          </div>
+          <div class="small" id="sentNote" style="margin-top:8px;display:none">Code sent — enter OTP below.</div>
         </div>
 
-        <div style="min-width:200px;display:flex;align-items:flex-end">
+        <div style="flex:1;min-width:220px">
+          <label for="otp">OTP / Code</label>
+          <input id="otp" type="text" placeholder="Enter OTP (code)" disabled />
+        </div>
+
+        <div style="min-width:160px;display:flex;align-items:flex-end">
           <div style="width:100%">
-            <div class="actions" role="group" aria-label="actions">
-              <button id="generateBtn">Generate</button>
-              <button id="clearBtn" class="alt">Clear</button>
-              <button id="openViewer" class="alt" title="Open viewer (session.html)">&nbsp;Viewer&nbsp;</button>
+            <div class="actions">
+              <button id="verifyBtn" class="primary" disabled>Verify</button>
+              <button id="clearBtn" class="ghost">Clear</button>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- Result -->
       <div id="resultArea" style="display:none">
-        <label style="margin-top:12px">Session String</label>
-        <pre id="sessionOutput" class="output" aria-live="polite"></pre>
+        <label>Session String</label>
+        <pre id="sessionBox" class="output" aria-live="polite"></pre>
 
-        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-          <button id="copyBtn" class="alt">Copy to clipboard</button>
-          <button id="downloadBtn" class="alt">Download .session</button>
-          <button id="openBtn" class="alt">Open in viewer</button>
+        <div class="controls">
+          <button id="copyBtn" class="ghost">Copy</button>
+          <button id="downloadBtn" class="ghost">Download .session</button>
+          <button id="openViewerBtn" class="ghost">Open Viewer</button>
+          <button id="showMetaBtn" class="ghost">Show Meta</button>
         </div>
-        <div class="note" id="noteArea"></div>
+
+        <div id="metaBox" class="output" style="display:none"></div>
       </div>
+
+      <div class="note">Security: this UI expects a server that performs real Telegram login (OTP handling) and returns the session.The endpoints expected: <code>/start_login</code> and <code>/complete_login</code>.</div>
     </div>
   </div>
 
-  <script src="/sessiongen.js"></script>
-  <script>
-    // wire UI (small helpers)
-    const genBtn = document.getElementById('generateBtn');
-    const clearBtn = document.getElementById('clearBtn');
-    const openViewer = document.getElementById('openViewer');
+<script>
+/*
+session.html client logic
+Expects backend endpoints:
+  POST /start_login  => { api_id, api_hash, phone }  returns { success:true, token }
+  POST /complete_login => { token, code, password? } returns { success:true, session }
+*/
 
-    const apiIdEl = document.getElementById('apiId');
-    const apiHashEl = document.getElementById('apiHash');
-    const phoneEl = document.getElementById('phone');
-    const ngrokEl = document.getElementById('ngrok');
+// DOM
+const apiIdEl = document.getElementById('apiId');
+const apiHashEl = document.getElementById('apiHash');
+const phoneEl = document.getElementById('phone');
+const sendCodeBtn = document.getElementById('sendCodeBtn');
+const abortBtn = document.getElementById('abortBtn');
+const flowStatus = document.getElementById('flowStatus');
+const sentNote = document.getElementById('sentNote');
 
-    const resultArea = document.getElementById('resultArea');
-    const sessionOutput = document.getElementById('sessionOutput');
-    const copyBtn = document.getElementById('copyBtn');
-    const downloadBtn = document.getElementById('downloadBtn');
-    const openBtn = document.getElementById('openBtn');
-    const noteArea = document.getElementById('noteArea');
+const otpEl = document.getElementById('otp');
+const verifyBtn = document.getElementById('verifyBtn');
+const clearBtn = document.getElementById('clearBtn');
 
-    // generate -> call sessiongen (defined in sessiongen.js)
-    genBtn.addEventListener('click', async () => {
-      const api_id = apiIdEl.value.trim();
-      const api_hash = apiHashEl.value.trim();
-      const phone = phoneEl.value.trim();
-      const ngrok = ngrokEl.value.trim();
+const resultArea = document.getElementById('resultArea');
+const sessionBox = document.getElementById('sessionBox');
+const copyBtn = document.getElementById('copyBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const openViewerBtn = document.getElementById('openViewerBtn');
+const showMetaBtn = document.getElementById('showMetaBtn');
+const metaBox = document.getElementById('metaBox');
 
-      if (!api_id || !api_hash || !phone) {
-        alert('Provide API ID, API Hash, and phone number');
-        return;
-      }
+let flowToken = null;
+let lastSession = null;
 
-      genBtn.disabled = true;
-      genBtn.textContent = 'Generating...';
+// helpers
+function setStatus(t){
+  flowStatus.textContent = t || '';
+}
+function showError(msg){
+  alert(msg);
+  setStatus('');
+}
+function enableOTP(enable){
+  otpEl.disabled = !enable;
+  verifyBtn.disabled = !enable;
+}
 
-      try {
-        // sessiongen.generate returns { success, session, note }
-        const resp = await window.sessiongen.generate({ api_id, api_hash, phone, ngrok });
-        if (!resp || !resp.success) throw new Error(resp && resp.error ? resp.error : 'Generation failed');
+// send code -> start_login
+sendCodeBtn.addEventListener('click', async ()=>{
+  const api_id = apiIdEl.value.trim();
+  const api_hash = apiHashEl.value.trim();
+  const phone = phoneEl.value.trim();
+  if(!api_id || !api_hash || !phone){
+    return showError('Provide API ID, API Hash and phone');
+  }
 
-        const session = resp.session;
-        sessionOutput.textContent = session;
-        resultArea.style.display = 'block';
-        noteArea.textContent = resp.note || '';
-
-      } catch (err) {
-        alert('Error: ' + (err.message || err));
-      } finally {
-        genBtn.disabled = false;
-        genBtn.textContent = 'Generate';
-      }
+  try{
+    sendCodeBtn.disabled = true;
+    setStatus('sending code...');
+    const body = { api_id: Number(api_id), api_hash: api_hash, phone: phone };
+    // if you protect API with ADMIN_TOKEN, include it here: body.admin_token = '...';
+    const res = await fetch('/start_login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
     });
+    const j = await res.json();
+    if(!res.ok || !j || !j.success){
+      throw new Error((j && j.detail) || (j && j.error) || 'Failed to send code');
+    }
+    flowToken = j.token;
+    setStatus('code sent');
+    sentNote.style.display = 'block';
+    enableOTP(true);
+    abortBtn.style.display = 'inline-block';
+    // focus OTP
+    otpEl.focus();
+  }catch(err){
+    console.error(err);
+    showError('Send code failed: ' + (err.message || err));
+  } finally {
+    sendCodeBtn.disabled = false;
+  }
+});
 
-    clearBtn.addEventListener('click', ()=>{
-      apiIdEl.value = ''; apiHashEl.value=''; phoneEl.value=''; ngrokEl.value=''; resultArea.style.display='none'; sessionOutput.textContent=''; noteArea.textContent='';
+// abort flow
+abortBtn.addEventListener('click', async ()=>{
+  if(!flowToken) return;
+  try{
+    // optional: call server to abort (if you implemented /abort_flow)
+    await fetch('/abort_flow', { method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ token: flowToken }) }).catch(()=>{});
+  }catch(e){}
+  flowToken = null;
+  setStatus('aborted');
+  enableOTP(false);
+  sentNote.style.display = 'none';
+  abortBtn.style.display = 'none';
+});
+
+// verify -> complete_login
+verifyBtn.addEventListener('click', async ()=>{
+  const code = otpEl.value.trim();
+  if(!code) return showError('Enter OTP code');
+
+  if(!flowToken) return showError('No active flow. Click Send Code first');
+
+  try{
+    verifyBtn.disabled = true;
+    setStatus('verifying...');
+    const body = { token: flowToken, code: code };
+    // if 2FA password required, you can prompt and add password here: body.password = '...';
+    const res = await fetch('/complete_login', {
+      method: 'POST', headers:{ 'Content-Type': 'application/json' }, body: JSON.stringify(body)
     });
+    const j = await res.json();
+    if(!res.ok || !j || !j.success){
+      throw new Error((j && j.detail) || (j && j.error) || 'Verification failed');
+    }
+    lastSession = j.session;
+    sessionBox.textContent = lastSession;
+    resultArea.style.display = 'block';
+    setStatus('done');
+    // clear flow
+    flowToken = null;
+    enableOTP(false);
+    sentNote.style.display = 'none';
+    abortBtn.style.display = 'none';
+  }catch(err){
+    console.error(err);
+    showError('Verify failed: ' + (err.message || err));
+  } finally {
+    verifyBtn.disabled = false;
+  }
+});
 
-    copyBtn.addEventListener('click', async ()=>{
-      const txt = sessionOutput.textContent.trim();
-      if (!txt) return;
-      try { await navigator.clipboard.writeText(txt); copyBtn.textContent = 'Copied'; setTimeout(()=>copyBtn.textContent='Copy to clipboard',1200); }
-      catch(e){ alert('Copy failed'); }
-    });
+// clear form
+clearBtn.addEventListener('click', ()=>{
+  apiIdEl.value=''; apiHashEl.value=''; phoneEl.value=''; otpEl.value=''; resultArea.style.display='none'; sessionBox.textContent=''; metaBox.style.display='none'; metaBox.textContent=''; flowToken=null; enableOTP(false); abortBtn.style.display='none'; sentNote.style.display='none'; setStatus('');
+});
 
-    downloadBtn.addEventListener('click', ()=>{
-      const txt = sessionOutput.textContent.trim();
-      if (!txt) return alert('No session');
-      const blob = new Blob([txt], { type: 'text/plain' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob); a.download = 'session.session'; a.click();
-    });
+// copy
+copyBtn.addEventListener('click', async ()=>{
+  if(!lastSession) return;
+  try{
+    await navigator.clipboard.writeText(lastSession);
+    copyBtn.textContent = 'Copied';
+    setTimeout(()=>copyBtn.textContent='Copy',1200);
+  }catch(e){ alert('Copy failed'); }
+});
 
-    openBtn.addEventListener('click', ()=>{
-      const txt = encodeURIComponent(sessionOutput.textContent.trim());
-      if (!txt) return;
-      window.open('/session.html?s=' + txt, '_blank');
-    });
+// download
+downloadBtn.addEventListener('click', ()=>{
+  if(!lastSession) return alert('No session');
+  const blob = new Blob([lastSession], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'session.session';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
 
-    openViewer.addEventListener('click', ()=> window.open('/session.html','_blank'));
-  </script>
+// open viewer
+openViewerBtn.addEventListener('click', ()=>{
+  if(!lastSession) return;
+  const qs = encodeURIComponent(lastSession);
+  window.open('/session.html?s=' + qs, '_blank');
+});
+
+// show meta (try parse if SESSIONv1 format)
+showMetaBtn.addEventListener('click', ()=>{
+  if(!lastSession) return;
+  // try parse SESSIONv1:meta.sig or SESSION-CLIENT:meta.sig
+  const m = lastSession.match(/^[^:]+:([^\.]+)\.(.+)$/);
+  if(!m){ alert('No parseable meta found'); return; }
+  try{
+    // base64url decode
+    const metaB64 = m[1].replace(/-/g,'+').replace(/_/g,'/');
+    const pad = metaB64.length % 4 === 0 ? 0 : 4 - (metaB64.length % 4);
+    const padded = metaB64 + '='.repeat(pad);
+    const metaStr = atob(padded);
+    metaBox.style.display = 'block';
+    metaBox.textContent = JSON.stringify(JSON.parse(metaStr), null, 2);
+  }catch(e){
+    alert('Meta parse error: ' + (e.message||e));
+  }
+});
+
+// initialize: ensure OTP disabled
+enableOTP(false);
+abortBtn.style.display = 'none';
+resultArea.style.display = 'none';
+</script>
 </body>
-</html>
+  </html>
