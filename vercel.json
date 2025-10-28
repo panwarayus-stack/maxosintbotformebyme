@@ -12,6 +12,7 @@
     { "src": "ifsc.html", "use": "@vercel/static" },
     { "src": "osint.html", "use": "@vercel/static" },
     { "src": "gst.html", "use": "@vercel/static" },
+    { "src": "api.html", "use": "@vercel/static" },
     { "src": "tools.html", "use": "@vercel/static" },
     { "src": "session.html", "use": "@vercel/static" },
     { "src": "freeapi.html", "use": "@vercel/static" },
