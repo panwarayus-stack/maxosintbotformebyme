@@ -1,90 +1,465 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>InfoAPI Admin Panel</title>
-  <style>
-    body { font-family: monospace; background: #111; color: #0f0; text-align: center; padding: 50px; }
-    input, select, button { margin: 5px; padding: 8px; border-radius: 5px; border: none; }
-    input[type="password"], input[type="text"] { width: 200px; }
-    .hidden { display: none; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin API Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #0d0d0d 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: rgba(25, 25, 35, 0.95);
+            border-radius: 16px;
+            padding: 40px 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 600px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h2 {
+            font-size: 28px;
+            font-weight: 600;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+        
+        .login-section {
+            display: block;
+        }
+        
+        .api-section {
+            display: none;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #e0e0e0;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #333344;
+            border-radius: 10px;
+            background: #1a1a2e;
+            color: #ffffff;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #1e1e3a;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin: 25px 0;
+        }
+        
+        button {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(45deg, #5a6fd8, #6a4190);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #333344;
+            color: #ffffff;
+        }
+        
+        .btn-secondary:hover {
+            background: #444455;
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .status-message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .status-success {
+            background: rgba(40, 167, 69, 0.2);
+            border: 1px solid rgba(40, 167, 69, 0.5);
+            color: #28a745;
+        }
+        
+        .status-error {
+            background: rgba(220, 53, 69, 0.2);
+            border: 1px solid rgba(220, 53, 69, 0.5);
+            color: #dc3545;
+        }
+        
+        .result-section {
+            margin-top: 25px;
+            display: none;
+        }
+        
+        .result-section h3 {
+            color: #e0e0e0;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+        
+        pre {
+            background: #1a1a2e;
+            border: 1px solid #333344;
+            border-radius: 10px;
+            padding: 16px;
+            color: #28a745;
+            font-size: 13px;
+            line-height: 1.4;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            text-align: left;
+        }
+        
+        .api-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .api-type-btn {
+            padding: 10px;
+            background: #333344;
+            border: 1px solid #444455;
+            border-radius: 8px;
+            color: #ffffff;
+            cursor: pointer;
+            text-align: center;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .api-type-btn:hover {
+            background: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        .api-type-btn.active {
+            background: #667eea;
+            border-color: #764ba2;
+        }
+        
+        .user-info {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+        
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        
+        .logout-btn:hover {
+            background: #c82333;
+        }
+    </style>
 </head>
 <body>
-  <h2>🧠 InfoAPI Admin Login</h2>
+    <!-- Login Section -->
+    <div class="container login-section" id="loginSection">
+        <div class="header">
+            <h2>🔐 Admin Login</h2>
+            <p>Enter your credentials to access the API panel</p>
+        </div>
 
-  <div id="login">
-    <input id="user" placeholder="Username"><br>
-    <input id="pass" type="password" placeholder="Password"><br>
-    <input id="scode" placeholder="Security Code"><br>
-    <input id="bmonth" placeholder="Birthday Month"><br>
-    <input id="bdate" placeholder="Birthday Date"><br>
-    <button onclick="login()">Login</button>
-    <p id="msg"></p>
-  </div>
+        <div class="input-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Enter username" required>
+        </div>
 
-  <div id="panel" class="hidden">
-    <h3>✅ Welcome, Admin!</h3>
-    <select id="cmd">
-      <option>upiinfo</option>
-      <option>vh</option>
-      <option>num</option>
-      <option>adhar</option>
-      <option>imei</option>
-      <option>pak</option>
-      <option>ifsc</option>
-      <option>ip</option>
-      <option>pwned</option>
-      <option>fb</option>
-      <option>tg</option>
-      <option>familyinfo</option>
-      <option>familyinfo2</option>
-      <option>pan</option>
-    </select><br>
-    <input id="term" placeholder="Enter term"><br>
-    <input id="key" placeholder="Enter API key"><br>
-    <button onclick="runApi()">Run API</button>
-    <pre id="output"></pre>
-  </div>
+        <div class="input-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter password" required>
+        </div>
 
-  <script>
-    function login() {
-      const user = document.getElementById("user").value;
-      const pass = document.getElementById("pass").value;
-      const scode = document.getElementById("scode").value;
-      const month = document.getElementById("bmonth").value.toUpperCase();
-      const date = document.getElementById("bdate").value;
+        <div class="button-group">
+            <button class="btn-primary" onclick="login()">Login</button>
+        </div>
 
-      if (
-        user === "IAMMRWEIRDOO" &&
-        pass === "@YUSH098" &&
-        scode === "2011" &&
-        month === "MAY" &&
-        date === "3"
-      ) {
-        document.getElementById("login").classList.add("hidden");
-        document.getElementById("panel").classList.remove("hidden");
-      } else {
-        document.getElementById("msg").innerText = "❌ Invalid credentials";
-      }
-    }
+        <div id="loginStatus" class="status-message"></div>
+    </div>
 
-    async function runApi() {
-      const type = document.getElementById("cmd").value;
-      const term = document.getElementById("term").value;
-      const key = document.getElementById("key").value;
-      const url = `/api/api?key=${key}&type=${type}&term=${term}`;
+    <!-- API Section -->
+    <div class="container api-section" id="apiSection">
+        <div class="header">
+            <h2>🚀 API Proxy Panel</h2>
+            <p>Make requests to your ngrok API</p>
+        </div>
 
-      document.getElementById("output").innerText = "⏳ Loading...";
+        <div class="user-info">
+            <p>Logged in as: <strong id="currentUser">@iammrweirdo</strong></p>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
 
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
-        document.getElementById("output").innerText = JSON.stringify(data, null, 2);
-      } catch (e) {
-        document.getElementById("output").innerText = "❌ Error: " + e.message;
-      }
-    }
-  </script>
+        <div class="input-group">
+            <label for="apiType">API Type</label>
+            <select id="apiType" onchange="updatePlaceholder()">
+                <option value="upiinfo">UPI Info</option>
+                <option value="vh">VH</option>
+                <option value="num">Number</option>
+                <option value="adhar">Aadhar</option>
+                <option value="imei">IMEI</option>
+                <option value="pak">PAK</option>
+                <option value="ifsc">IFSC</option>
+                <option value="ip">IP</option>
+                <option value="pwned">Pwned</option>
+                <option value="like">Like</option>
+                <option value="fb">Facebook</option>
+                <option value="bomb">Bomb</option>
+                <option value="stop">Stop</option>
+                <option value="tg">Telegram</option>
+                <option value="familyinfo">Family Info</option>
+                <option value="familyinfo2">Family Info 2</option>
+                <option value="reset">Reset</option>
+                <option value="pan">PAN</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="searchTerm">Search Term</label>
+            <input type="text" id="searchTerm" placeholder="Enter search term..." required>
+        </div>
+
+        <div class="button-group">
+            <button class="btn-primary" onclick="makeApiRequest()">Make API Request</button>
+            <button class="btn-secondary" onclick="clearResults()">Clear</button>
+        </div>
+
+        <div id="apiStatus" class="status-message"></div>
+
+        <div class="result-section" id="resultSection">
+            <h3>API Response</h3>
+            <pre id="apiResponse">Response will appear here...</pre>
+        </div>
+    </div>
+
+    <script>
+        const VALID_USERNAME = "@iammrweirdo";
+        const VALID_PASSWORD = "@YUSH098";
+        const API_BASE_URL = "https://daphine-unconstraining-lenora.ngrok-free.dev/api";
+        const API_KEY = "key20";
+
+        function showStatus(message, type = 'info', elementId = 'apiStatus') {
+            const statusEl = document.getElementById(elementId);
+            statusEl.textContent = message;
+            statusEl.className = `status-message status-${type}`;
+            statusEl.style.display = 'block';
+            
+            if (type !== 'error') {
+                setTimeout(() => {
+                    statusEl.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        function login() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!username || !password) {
+                showStatus('Please enter both username and password', 'error', 'loginStatus');
+                return;
+            }
+
+            if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+                // Store login state
+                localStorage.setItem('adminLoggedIn', 'true');
+                localStorage.setItem('adminUsername', username);
+                
+                // Show API section
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('apiSection').style.display = 'block';
+                document.getElementById('currentUser').textContent = username;
+                
+                showStatus('Login successful!', 'success', 'apiStatus');
+            } else {
+                showStatus('Invalid username or password', 'error', 'loginStatus');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('adminLoggedIn');
+            localStorage.removeItem('adminUsername');
+            document.getElementById('apiSection').style.display = 'none';
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            clearResults();
+        }
+
+        function updatePlaceholder() {
+            const type = document.getElementById('apiType').value;
+            const termInput = document.getElementById('searchTerm');
+            
+            const placeholders = {
+                'upiinfo': 'rahul@upi',
+                'num': '9876543210',
+                'adhar': '1234 5678 9012',
+                'imei': '123456789012345',
+                'ifsc': 'SBIN0000001',
+                'ip': '192.168.1.1',
+                'pwned': 'email@example.com',
+                'fb': 'facebook_username',
+                'tg': 'telegram_username',
+                'pan': 'ABCDE1234F'
+            };
+            
+            termInput.placeholder = placeholders[type] || 'Enter search term...';
+        }
+
+        async function makeApiRequest() {
+            const type = document.getElementById('apiType').value;
+            const term = document.getElementById('searchTerm').value.trim();
+
+            if (!term) {
+                showStatus('Please enter a search term', 'error');
+                return;
+            }
+
+            showStatus('Making API request...', 'info');
+
+            try {
+                // Use our Vercel API proxy
+                const response = await fetch('/api/proxy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        type: type,
+                        term: term
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || `HTTP error! status: ${response.status}`);
+                }
+
+                // Display the response
+                document.getElementById('apiResponse').textContent = JSON.stringify(data, null, 2);
+                document.getElementById('resultSection').style.display = 'block';
+                showStatus('API request successful!', 'success');
+
+            } catch (error) {
+                console.error('API Error:', error);
+                showStatus('Error: ' + error.message, 'error');
+                document.getElementById('apiResponse').textContent = 'Error: ' + error.message;
+                document.getElementById('resultSection').style.display = 'block';
+            }
+        }
+
+        function clearResults() {
+            document.getElementById('searchTerm').value = '';
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('apiStatus').style.display = 'none';
+        }
+
+        // Check if user is already logged in
+        function checkLogin() {
+            const isLoggedIn = localStorage.getItem('adminLoggedIn');
+            if (isLoggedIn === 'true') {
+                const username = localStorage.getItem('adminUsername');
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('apiSection').style.display = 'block';
+                document.getElementById('currentUser').textContent = username;
+            }
+        }
+
+        // Enter key support
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                if (document.getElementById('loginSection').style.display !== 'none') {
+                    login();
+                } else {
+                    makeApiRequest();
+                }
+            }
+        });
+
+        // Initialize
+        checkLogin();
+        updatePlaceholder();
+    </script>
 </body>
 </html>
