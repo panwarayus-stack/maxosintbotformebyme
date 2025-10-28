@@ -17,6 +17,8 @@
     { "src": "bomber.html", "use": "@vercel/static" },
     { "src": "freeapi.html", "use": "@vercel/static" },
     { "src": "api.html", "use": "@vercel/static" },
+    { "src": "apifree.html", "use": "@vercel/static" },
+    { "src": "emailspoof.html", "use": "@vercel/static" },
 
     { "src": "api/numdata.js", "use": "@vercel/node" },
     { "src": "api/adhardata.js", "use": "@vercel/node" },
@@ -29,7 +31,8 @@
     { "src": "api/gstdata.js", "use": "@vercel/node" },
     { "src": "api/sessiongen.js", "use": "@vercel/node" },
     { "src": "api/freeapi.js", "use": "@vercel/node" },
-    { "src": "api/api.js", "use": "@vercel/node" }
+    { "src": "api/api.js", "use": "@vercel/node" },
+    { "src": "api/bomber.js", "use": "@vercel/node" }
   ],
   "routes": [
     { "src": "/", "dest": "/index.html" },
@@ -45,8 +48,11 @@
     { "src": "/gst", "dest": "/gst.html" },
     { "src": "/tools", "dest": "/tools.html" },
     { "src": "/session", "dest": "/session.html" },
+    { "src": "/bomber", "dest": "/bomber.html" },
     { "src": "/freeapi", "dest": "/freeapi.html" },
     { "src": "/api", "dest": "/api.html" },
+    { "src": "/apifree", "dest": "/apifree.html" },
+    { "src": "/emailspoof", "dest": "/emailspoof.html" },
 
     { "src": "/api/numdata", "dest": "/api/numdata.js" },
     { "src": "/api/adhardata", "dest": "/api/adhardata.js" },
@@ -59,6 +65,7 @@
     { "src": "/api/gstdata", "dest": "/api/gstdata.js" },
     { "src": "/api/sessiongen", "dest": "/api/sessiongen.js" },
     { "src": "/api/freeapi", "dest": "/api/freeapi.js" },
-    { "src": "/api/api", "dest": "/api/api.js" }
+    { "src": "/api/api", "dest": "/api/api.js" },
+    { "src": "/api/bomber", "dest": "/api/bomber.js" }
   ]
 }
