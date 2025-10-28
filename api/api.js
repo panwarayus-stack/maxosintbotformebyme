@@ -50,10 +50,12 @@ export default async function handler(req, res) {
     const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        'ngrok-skip-browser-warning': 'true',
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'ngrok-skip-browser-warning': '69420',
+        'Accept': 'application/json, text/plain, */*',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Cache-Control': 'no-cache',
+        'Referer': 'https://daphine-unconstraining-lenora.ngrok-free.dev/'
       }
     });
     
@@ -61,7 +63,23 @@ export default async function handler(req, res) {
       throw new Error(`Ngrok API responded with status: ${response.status}`);
     }
     
-    const data = await response.json();
+    // Get the response text first to check if it's HTML or JSON
+    const responseText = await response.text();
+    
+    // Check if the response is HTML (ngrok warning page)
+    if (responseText.includes('ngrok.com') || responseText.includes('The page') || responseText.trim().startsWith('<!DOCTYPE') || responseText.trim().startsWith('<html')) {
+      throw new Error('Ngrok warning page detected - API endpoint might be blocked');
+    }
+    
+    // Try to parse as JSON
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (parseError) {
+      // If it's not JSON, return the raw text
+      console.log('Response is not JSON, returning raw text:', responseText.substring(0, 200));
+      data = { raw_response: responseText };
+    }
     
     // Return the data from ngrok API
     return res.status(200).json({
@@ -84,46 +102,66 @@ export default async function handler(req, res) {
   }
 }
 
-// Additional endpoint for direct API access (optional)
-export async function directHandler(req, res) {
-  if (req.method === 'GET') {
-    const { type, term } = req.query;
-    
-    if (!type || !term) {
-      return res.status(400).json({
-        success: false,
-        error: 'Missing type or term parameters'
-      });
-    }
-    
-    try {
-      const apiUrl = `https://daphine-unconstraining-lenora.ngrok-free.dev/api?key=key20&type=${type}&term=${encodeURIComponent(term)}`;
-      
-      const response = await fetch(apiUrl, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-          'ngrok-skip-browser-warning': 'true'
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
-      return res.status(200).json({
-        success: true,
-        data: data
-      });
-      
-    } catch (error) {
-      return res.status(500).json({
-        success: false,
-        error: error.message
-      });
-    }
+// Additional endpoint for direct GET access
+export async function GET(req) {
+  const { searchParams } = new URL(req.url);
+  const type = searchParams.get('type');
+  const term = searchParams.get('term');
+  
+  if (!type || !term) {
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Missing type or term parameters'
+    }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
   
-  return res.status(405).json({ error: 'Method not allowed' });
+  try {
+    const apiUrl = `https://daphine-unconstraining-lenora.ngrok-free.dev/api?key=key20&type=${type}&term=${encodeURIComponent(term)}`;
+    
+    const response = await fetch(apiUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'ngrok-skip-browser-warning': '69420',
+        'Accept': 'application/json, text/plain, */*'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const responseText = await response.text();
+    
+    // Check for ngrok warning page
+    if (responseText.includes('ngrok.com') || responseText.includes('The page')) {
+      throw new Error('Ngrok warning page detected');
+    }
+    
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch {
+      data = { raw_response: responseText };
+    }
+    
+    return new Response(JSON.stringify({
+      success: true,
+      data: data
+    }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
+    
+  } catch (error) {
+    return new Response(JSON.stringify({
+      success: false,
+      error: error.message
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
 }
