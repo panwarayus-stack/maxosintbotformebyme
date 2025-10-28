@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>MR WEIRDO — OTP Bomber</title>
+<style>
+:root{
+  --bg:#020204;
+  --panel:#0b1008;
+  --neon:#00ff7f;
+  --neon-2:#00c174;
+  --muted:#7fae8a;
+  --card-border: rgba(0,255,127,0.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,"Roboto Mono",monospace;background:linear-gradient(180deg,var(--bg),#07120a);color:#dfffe0;overflow-x:hidden}
+.container{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+/* main card */
+.card{width:100%;max-width:1100px;background:linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.32));border:1px solid var(--card-border);backdrop-filter: blur(6px);box-shadow:0 30px 90px rgba(0,0,0,0.7);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:14px}
+/* header */
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.title{font-size:20px;color:var(--neon-2);font-weight:800;letter-spacing:1px}
+.subtitle{font-size:12px;color:var(--muted)}
+/* form elements */
+.form-group{margin-bottom:16px}
+.form-label{display:block;margin-bottom:8px;color:var(--neon-2);font-size:14px;font-weight:600}
+.form-input{
+  width:100%;padding:12px 14px;border-radius:8px;background:rgba(0,0,0,0.3);border:1px solid rgba(0,255,127,0.1);
+  color:#dfffe0;font-family:inherit;font-size:14px;transition:all 0.2s
+}
+.form-input:focus{
+  outline:none;border-color:var(--neon);box-shadow:0 0 0 2px rgba(0,255,127,0.15)
+}
+/* buttons */
+.btn{
+  display:flex;align-items:center;justify-content:center;padding:14px 20px;border-radius:10px;background:linear-gradient(90deg, rgba(0,255,127,0.08), rgba(0,193,116,0.06));border:1px solid rgba(0,255,127,0.06);color:var(--neon);font-weight:800;cursor:pointer;transition:transform .12s, box-shadow .12s;font-family:inherit;font-size:14px;width:100%
+}
+.btn:hover{ transform:translateY(-3px); box-shadow:0 8px 30px rgba(0,255,127,0.06) }
+.btn:active{ transform:translateY(-1px) }
+.btn:disabled{ opacity:0.5; cursor:not-allowed; transform:none }
+.btn-danger{background:linear-gradient(90deg, rgba(255,0,64,0.08), rgba(193,0,50,0.06));border:1px solid rgba(255,0,64,0.06);color:#ff0040}
+.btn-danger:hover{ box-shadow:0 8px 30px rgba(255,0,64,0.06) }
+
+/* status and logs */
+.status-panel{
+  padding:16px;border-radius:8px;background:rgba(0,0,0,0.3);border:1px solid rgba(0,255,127,0.05);
+  margin-bottom:16px
+}
+.status-text{color:var(--neon);font-weight:600;font-size:14px}
+.log-panel{
+  height:300px;overflow-y:auto;padding:16px;border-radius:8px;background:rgba(0,0,0,0.3);border:1px solid rgba(0,255,127,0.05);
+  font-size:13px;line-height:1.5
+}
+.log-entry{
+  margin-bottom:8px;padding:8px 12px;border-radius:6px;background:rgba(0,0,0,0.2)
+}
+.log-success{color:var(--neon);border-left:3px solid var(--neon)}
+.log-error{color:#ff4d6d;border-left:3px solid #ff4d6d}
+.log-info{color:var(--muted);border-left:3px solid var(--muted)}
+
+/* api counter */
+.api-counter{
+  text-align:center;padding:10px;border-radius:8px;background:rgba(0,0,0,0.2);border:1px solid rgba(0,255,127,0.05);
+  color:var(--neon-2);font-size:14px;margin-bottom:16px
+}
+
+/* grid layout */
+.toolsGrid{display:grid;gap:12px}
+@media (max-width:599px){ .toolsGrid { grid-template-columns: 1fr; } }
+@media (min-width:600px) and (max-width:899px){ .toolsGrid { grid-template-columns: repeat(2,1fr); } }
+@media (min-width:900px){ .toolsGrid { grid-template-columns: repeat(2,1fr); } }
+
+/* back button */
+.back-btn{
+  display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:8px;
+  background:rgba(0,0,0,0.2);border:1px solid rgba(0,255,127,0.1);color:var(--muted);
+  text-decoration:none;font-size:13px;transition:all 0.2s;margin-bottom:16px
+}
+.back-btn:hover{ color:var(--neon); border-color:var(--neon) }
+
+/* footer area */
+.foot{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
+.info{font-size:12px;color:var(--muted)}
+
+/* trademark + dot bottom-right */
+.trademarkWrap{position:fixed;right:18px;bottom:10px;z-index:9999;display:flex;align-items:center;gap:8px;pointer-events:auto}
+.trademark{font-size:12px;color:var(--muted);opacity:0.95}
+.dotDecor{
+  width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+  background:transparent;color:var(--muted);font-size:12px;border:1px solid rgba(255,255,255,0.02);padding-bottom:1px;
+}
+
+/* subtle responsive tweaks */
+@media (max-width:500px){
+  .btn{padding:12px}
+  .title{font-size:18px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="card" role="main" aria-live="polite">
+    <a href="/" class="back-btn">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M11.5 14.5L4 8l7.5-6.5"/>
+      </svg>
+      BACK TO TOOLS
+    </a>
+    
+    <div class="header">
+      <div>
+        <div class="title">MR WEIRDO — OTP BOMBER</div>
+        <div class="subtitle" aria-hidden="true">SEND MULTIPLE OTP REQUESTS</div>
+      </div>
+      <div class="subtitle" aria-hidden="true">v1.0</div>
+    </div>
+
+    <!-- API Counter -->
+    <div class="api-counter" id="apiCounter">
+      READY TO USE <span id="apiCount">13</span> APIS
+    </div>
+
+    <!-- Input Form -->
+    <div class="form-group">
+      <label class="form-label" for="phoneNumber">PHONE NUMBER</label>
+      <input 
+        type="tel" 
+        id="phoneNumber" 
+        class="form-input"
+        placeholder="ENTER 10-DIGIT NUMBER (E.G. 9876543210)" 
+        maxlength="10"
+        pattern="[0-9]{10}"
+      >
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="ipAddress">IP ADDRESS (OPTIONAL)</label>
+      <input 
+        type="text" 
+        id="ipAddress" 
+        class="form-input"
+        placeholder="ENTER IP ADDRESS (DEFAULT: 192.168.1.1)"
+      >
+    </div>
+
+    <!-- Control Buttons -->
+    <div class="toolsGrid">
+      <button type="button" class="btn" id="startBtn">
+        START OTP BOMBER
+      </button>
+      <button type="button" class="btn btn-danger" id="stopBtn" style="display:none">
+        STOP BOMBER
+      </button>
+    </div>
+
+    <!-- Status Panel -->
+    <div class="status-panel" id="statusPanel" style="display:none">
+      <div class="status-text" id="statusText">READY</div>
+    </div>
+
+    <!-- Log Panel -->
+    <div class="log-panel" id="logPanel">
+      <div class="log-entry log-info">LOG WILL APPEAR HERE...</div>
+    </div>
+
+    <div class="foot" aria-hidden="true">
+      <div class="info">USE RESPONSIBLY</div>
+      <div class="info">MR WEIRDO</div>
+    </div>
+  </div>
+</div>
+
+<!-- trademark + dot (decorative only) -->
+<div class="trademarkWrap" aria-hidden="true">
+  <div class="trademark">Copyright reserved 2025 MR WEIRDO ©</div>
+  <div class="dotDecor">•</div>
+</div>
+
+<script>
+class OTPBomber {
+  constructor() {
+    this.isRunning = false;
+    this.controller = null;
+    this.startBtn = document.getElementById('startBtn');
+    this.stopBtn = document.getElementById('stopBtn');
+    this.statusPanel = document.getElementById('statusPanel');
+    this.statusText = document.getElementById('statusText');
+    this.logPanel = document.getElementById('logPanel');
+    this.apiCounter = document.getElementById('apiCounter');
+    this.apiCount = document.getElementById('apiCount');
+    
+    this.bindEvents();
+  }
+
+  bindEvents() {
+    this.startBtn.addEventListener('click', () => this.start());
+    this.stopBtn.addEventListener('click', () => this.stop());
+    
+    // Phone number validation
+    document.getElementById('phoneNumber').addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/[^0-9]/g, '').slice(0, 10);
+    });
+  }
+
+  async start() {
+    const phoneNumber = document.getElementById('phoneNumber').value;
+    const ipAddress = document.getElementById('ipAddress').value || '192.168.1.1';
+
+    if (!phoneNumber || phoneNumber.length !== 10) {
+      this.showError('PLEASE ENTER A VALID 10-DIGIT PHONE NUMBER');
+      return;
+    }
+
+    this.isRunning = true;
+    this.controller = new AbortController();
+    
+    this.startBtn.style.display = 'none';
+    this.stopBtn.style.display = 'flex';
+    this.statusPanel.style.display = 'block';
+    
+    this.updateStatus('STARTING OTP BOMBER...');
+    this.clearLog();
+    this.addLog('STARTING OTP BOMBER FOR: ' + phoneNumber, 'info');
+
+    try {
+      await this.sendRequests(phoneNumber, ipAddress);
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        this.addLog('ERROR: ' + error.message, 'error');
+      }
+    }
+  }
+
+  stop() {
+    this.isRunning = false;
+    if (this.controller) {
+      this.controller.abort();
+    }
+    
+    this.startBtn.style.display = 'flex';
+    this.stopBtn.style.display = 'none';
+    this.updateStatus('STOPPED BY USER');
+    this.addLog('BOMBER STOPPED BY USER', 'info');
+  }
+
+  async sendRequests(phoneNumber, ipAddress) {
+    while (this.isRunning) {
+      try {
+        const response = await fetch('/api/bomber', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            phoneNumber,
+            ipAddress
+          }),
+          signal: this.controller.signal
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ERROR! STATUS: ${response.status}`);
+        }
+
+        const data = await response.json();
+        
+        if (data.success) {
+          this.updateStatus(`RUNNING - ${data.activeAPIs} APIS ACTIVE`);
+          this.apiCount.textContent = data.activeAPIs;
+          
+          data.results.forEach(result => {
+            if (result.status === 200 || result.status === 201) {
+              this.addLog(`✓ ${this.shortenUrl(result.endpoint)} - STATUS: ${result.status}`, 'success');
+            } else if (result.status) {
+              this.addLog(`✗ ${this.shortenUrl(result.endpoint)} - STATUS: ${result.status}`, 'error');
+            } else {
+              this.addLog(`✗ ${this.shortenUrl(result.endpoint)} - ERROR: ${result.error}`, 'error');
+            }
+          });
+        } else {
+          this.addLog('ERROR: ' + data.error, 'error');
+        }
+
+        // Small delay between requests
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+      } catch (error) {
+        if (error.name === 'AbortError') {
+          this.addLog('REQUEST CANCELLED', 'info');
+          break;
+        }
+        this.addLog('NETWORK ERROR: ' + error.message, 'error');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+    }
+  }
+
+  shortenUrl(url) {
+    try {
+      const domain = new URL(url).hostname;
+      return domain.replace('www.', '');
+    } catch {
+      return url.length > 30 ? url.substring(0, 30) + '...' : url;
+    }
+  }
+
+  updateStatus(text) {
+    this.statusText.textContent = text;
+  }
+
+  addLog(message, type = 'info') {
+    const logEntry = document.createElement('div');
+    logEntry.className = `log-entry log-${type}`;
+    
+    const timestamp = new Date().toLocaleTimeString();
+    logEntry.textContent = `[${timestamp}] ${message}`;
+    
+    this.logPanel.appendChild(logEntry);
+    this.logPanel.scrollTop = this.logPanel.scrollHeight;
+  }
+
+  clearLog() {
+    this.logPanel.innerHTML = '';
+  }
+
+  showError(message) {
+    this.addLog('ERROR: ' + message, 'error');
+  }
+}
+
+// Initialize the bomber when page loads
+document.addEventListener('DOMContentLoaded', () => {
+  new OTPBomber();
+});
+</script>
+</body>
+</html>
