@@ -14,6 +14,7 @@
     { "src": "gst.html", "use": "@vercel/static" },
     { "src": "tools.html", "use": "@vercel/static" },
     { "src": "session.html", "use": "@vercel/static" },
+    { "src": "bomber.html", "use": "@vercel/static" },
     { "src": "freeapi.html", "use": "@vercel/static" },
     { "src": "api.html", "use": "@vercel/static" },
 
