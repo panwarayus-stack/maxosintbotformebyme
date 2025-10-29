@@ -46,12 +46,13 @@ export default async function handler(req, res) {
     
     console.log(`Making request to: ${apiUrl}`);
     
-    // Make request to ngrok API with proper headers to bypass ngrok warning
+    // Make request to ngrok API with multiple bypass headers
     const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
         'ngrok-skip-browser-warning': '69420',
+        'X-Forwarded-For': '123.123.123.123',
         'Accept': 'application/json, text/plain, */*',
         'Accept-Language': 'en-US,en;q=0.9',
         'Cache-Control': 'no-cache',
@@ -60,15 +61,30 @@ export default async function handler(req, res) {
     });
     
     if (!response.ok) {
-      throw new Error(`Ngrok API responded with status: ${response.status}`);
+      return res.status(500).json({
+        success: false,
+        error: `Ngrok API responded with status: ${response.status}`,
+        status: response.status
+      });
     }
     
-    // Get the response text first to check if it's HTML or JSON
+    // Get the response as text first
     const responseText = await response.text();
     
-    // Check if the response is HTML (ngrok warning page)
-    if (responseText.includes('ngrok.com') || responseText.includes('The page') || responseText.trim().startsWith('<!DOCTYPE') || responseText.trim().startsWith('<html')) {
-      throw new Error('Ngrok warning page detected - API endpoint might be blocked');
+    // Check if it's the ngrok warning page
+    if (responseText.includes('ngrok.com') || 
+        responseText.includes('The page') || 
+        responseText.includes('51.75.118.149') ||
+        responseText.trim().startsWith('<!DOCTYPE') || 
+        responseText.trim().startsWith('<html')) {
+      
+      return res.status(400).json({
+        success: false,
+        error: 'NGROK_WARNING_PAGE',
+        message: 'Ngrok is showing warning page instead of API response',
+        suggestion: 'Try accessing the API directly with bypass headers',
+        raw_preview: responseText.substring(0, 300)
+      });
     }
     
     // Try to parse as JSON
@@ -77,18 +93,30 @@ export default async function handler(req, res) {
       data = JSON.parse(responseText);
     } catch (parseError) {
       // If it's not JSON, return the raw text
-      console.log('Response is not JSON, returning raw text:', responseText.substring(0, 200));
-      data = { raw_response: responseText };
+      return res.status(200).json({
+        success: true,
+        data: {
+          raw_response: responseText,
+          note: 'Response was not valid JSON, returning raw text'
+        },
+        meta: {
+          type: type,
+          term: term,
+          timestamp: new Date().toISOString(),
+          response_type: 'raw_text'
+        }
+      });
     }
     
-    // Return the data from ngrok API
+    // Return the successful JSON data
     return res.status(200).json({
       success: true,
       data: data,
       meta: {
         type: type,
         term: term,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        response_type: 'json'
       }
     });
     
@@ -97,16 +125,17 @@ export default async function handler(req, res) {
     
     return res.status(500).json({
       success: false,
-      error: 'Failed to fetch from ngrok API: ' + error.message
+      error: 'Failed to fetch from ngrok API: ' + error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 }
 
-// Additional endpoint for direct GET access
+// Additional GET endpoint for direct testing
 export async function GET(req) {
-  const { searchParams } = new URL(req.url);
-  const type = searchParams.get('type');
-  const term = searchParams.get('term');
+  const url = new URL(req.url);
+  const type = url.searchParams.get('type');
+  const term = url.searchParams.get('term');
   
   if (!type || !term) {
     return new Response(JSON.stringify({
@@ -123,33 +152,17 @@ export async function GET(req) {
     
     const response = await fetch(apiUrl, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'ngrok-skip-browser-warning': '69420',
-        'Accept': 'application/json, text/plain, */*'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'ngrok-skip-browser-warning': 'true'
       }
     });
     
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const responseText = await response.text();
-    
-    // Check for ngrok warning page
-    if (responseText.includes('ngrok.com') || responseText.includes('The page')) {
-      throw new Error('Ngrok warning page detected');
-    }
-    
-    let data;
-    try {
-      data = JSON.parse(responseText);
-    } catch {
-      data = { raw_response: responseText };
-    }
+    const text = await response.text();
     
     return new Response(JSON.stringify({
       success: true,
-      data: data
+      raw_response: text,
+      url: apiUrl
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
