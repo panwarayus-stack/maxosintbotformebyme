@@ -138,7 +138,6 @@
             margin: 15px 0;
             text-align: center;
             font-size: 14px;
-            display: none;
         }
         
         .status-success {
@@ -153,9 +152,14 @@
             color: #dc3545;
         }
         
+        .status-info {
+            background: rgba(23, 162, 184, 0.2);
+            border: 1px solid rgba(23, 162, 184, 0.5);
+            color: #17a2b8;
+        }
+        
         .result-section {
             margin-top: 25px;
-            display: none;
         }
         
         .result-section h3 {
@@ -177,35 +181,6 @@
             white-space: pre-wrap;
             word-break: break-all;
             text-align: left;
-        }
-        
-        .api-types {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 10px;
-            margin: 15px 0;
-        }
-        
-        .api-type-btn {
-            padding: 10px;
-            background: #333344;
-            border: 1px solid #444455;
-            border-radius: 8px;
-            color: #ffffff;
-            cursor: pointer;
-            text-align: center;
-            font-size: 12px;
-            transition: all 0.3s ease;
-        }
-        
-        .api-type-btn:hover {
-            background: #667eea;
-            transform: translateY(-2px);
-        }
-        
-        .api-type-btn.active {
-            background: #667eea;
-            border-color: #764ba2;
         }
         
         .user-info {
@@ -231,6 +206,10 @@
         .logout-btn:hover {
             background: #c82333;
         }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -255,7 +234,7 @@
             <button class="btn-primary" onclick="login()">Login</button>
         </div>
 
-        <div id="loginStatus" class="status-message"></div>
+        <div id="loginStatus" class="status-message hidden"></div>
     </div>
 
     <!-- API Section -->
@@ -304,9 +283,9 @@
             <button class="btn-secondary" onclick="clearResults()">Clear</button>
         </div>
 
-        <div id="apiStatus" class="status-message"></div>
+        <div id="apiStatus" class="status-message hidden"></div>
 
-        <div class="result-section" id="resultSection">
+        <div class="result-section">
             <h3>API Response</h3>
             <pre id="apiResponse">Response will appear here...</pre>
         </div>
@@ -315,20 +294,22 @@
     <script>
         const VALID_USERNAME = "@iammrweirdo";
         const VALID_PASSWORD = "@YUSH098";
-        const API_BASE_URL = "https://daphine-unconstraining-lenora.ngrok-free.dev/api";
-        const API_KEY = "key20";
 
         function showStatus(message, type = 'info', elementId = 'apiStatus') {
             const statusEl = document.getElementById(elementId);
             statusEl.textContent = message;
             statusEl.className = `status-message status-${type}`;
-            statusEl.style.display = 'block';
+            statusEl.classList.remove('hidden');
             
             if (type !== 'error') {
                 setTimeout(() => {
-                    statusEl.style.display = 'none';
+                    statusEl.classList.add('hidden');
                 }, 5000);
             }
+        }
+
+        function hideStatus(elementId = 'apiStatus') {
+            document.getElementById(elementId).classList.add('hidden');
         }
 
         function login() {
@@ -350,7 +331,7 @@
                 document.getElementById('apiSection').style.display = 'block';
                 document.getElementById('currentUser').textContent = username;
                 
-                showStatus('Login successful!', 'success', 'apiStatus');
+                showStatus('Login successful!', 'success');
             } else {
                 showStatus('Invalid username or password', 'error', 'loginStatus');
             }
@@ -396,43 +377,66 @@
             }
 
             showStatus('Making API request...', 'info');
+            document.getElementById('startBtn').disabled = true;
 
             try {
-                // Use our Vercel API proxy
-                const response = await fetch('/api/proxy', {
-                    method: 'POST',
+                // Test the ngrok API directly first to see what we get
+                const testUrl = `https://daphine-unconstraining-lenora.ngrok-free.dev/api?key=key20&type=${type}&term=${encodeURIComponent(term)}`;
+                
+                console.log('Making request to:', testUrl);
+                
+                const response = await fetch(testUrl, {
+                    method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        type: type,
-                        term: term
-                    })
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                        'ngrok-skip-browser-warning': 'true',
+                        'Accept': 'application/json, text/plain, */*'
+                    }
                 });
 
-                const data = await response.json();
+                // Get the response as text first
+                const responseText = await response.text();
+                console.log('Raw response:', responseText.substring(0, 200));
 
-                if (!response.ok) {
-                    throw new Error(data.error || `HTTP error! status: ${response.status}`);
+                let data;
+                
+                // Check if it's the ngrok warning page
+                if (responseText.includes('ngrok.com') || responseText.includes('The page') || responseText.trim().startsWith('<!DOCTYPE')) {
+                    data = {
+                        error: 'NGROK_WARNING_PAGE',
+                        message: 'Ngrok warning page detected. The API might be blocked.',
+                        raw_html: responseText.substring(0, 500)
+                    };
+                } else {
+                    // Try to parse as JSON
+                    try {
+                        data = JSON.parse(responseText);
+                    } catch (parseError) {
+                        // If it's not JSON, return the raw text
+                        data = {
+                            raw_response: responseText,
+                            note: 'Response was not valid JSON'
+                        };
+                    }
                 }
 
                 // Display the response
                 document.getElementById('apiResponse').textContent = JSON.stringify(data, null, 2);
-                document.getElementById('resultSection').style.display = 'block';
-                showStatus('API request successful!', 'success');
+                showStatus('Request completed!', 'success');
 
             } catch (error) {
                 console.error('API Error:', error);
                 showStatus('Error: ' + error.message, 'error');
-                document.getElementById('apiResponse').textContent = 'Error: ' + error.message;
-                document.getElementById('resultSection').style.display = 'block';
+                document.getElementById('apiResponse').textContent = 'Error Details:\n' + error.message + '\n\nStack: ' + error.stack;
+            } finally {
+                document.getElementById('startBtn').disabled = false;
             }
         }
 
         function clearResults() {
             document.getElementById('searchTerm').value = '';
-            document.getElementById('resultSection').style.display = 'none';
-            document.getElementById('apiStatus').style.display = 'none';
+            document.getElementById('apiResponse').textContent = 'Response will appear here...';
+            hideStatus();
         }
 
         // Check if user is already logged in
