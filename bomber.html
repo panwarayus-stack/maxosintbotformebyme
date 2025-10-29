@@ -1,314 +1,426 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>MR WEIRDO — OTP Bomber</title>
-<style>
-:root{
-  --bg:#020204;
-  --panel:#0b1008;
-  --neon:#00ff7f;
-  --neon-2:#00c174;
-  --muted:#7fae8a;
-  --card-border: rgba(0,255,127,0.06);
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,"Roboto Mono",monospace;background:linear-gradient(180deg,var(--bg),#07120a);color:#dfffe0;overflow-x:hidden}
-.container{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-.card{width:100%;max-width:1100px;background:linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.32));border:1px solid var(--card-border);backdrop-filter: blur(6px);box-shadow:0 30px 90px rgba(0,0,0,0.7);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:14px}
-.header{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.title{font-size:20px;color:var(--neon-2);font-weight:800;letter-spacing:1px}
-.subtitle{font-size:12px;color:var(--muted)}
-.form-group{margin-bottom:16px}
-.form-label{display:block;margin-bottom:8px;color:var(--neon-2);font-size:14px;font-weight:600}
-.form-input{
-  width:100%;padding:12px 14px;border-radius:8px;background:rgba(0,0,0,0.3);border:1px solid rgba(0,255,127,0.1);
-  color:#dfffe0;font-family:inherit;font-size:14px;transition:all 0.2s
-}
-.form-input:focus{
-  outline:none;border-color:var(--neon);box-shadow:0 0 0 2px rgba(0,255,127,0.15)
-}
-.btn{
-  display:flex;align-items:center;justify-content:center;padding:14px 20px;border-radius:10px;background:linear-gradient(90deg, rgba(0,255,127,0.08), rgba(0,193,116,0.06));border:1px solid rgba(0,255,127,0.06);color:var(--neon);font-weight:800;cursor:pointer;transition:transform .12s, box-shadow .12s;font-family:inherit;font-size:14px;width:100%
-}
-.btn:hover{ transform:translateY(-3px); box-shadow:0 8px 30px rgba(0,255,127,0.06) }
-.btn:active{ transform:translateY(-1px) }
-.btn:disabled{ opacity:0.5; cursor:not-allowed; transform:none }
-.btn-danger{background:linear-gradient(90deg, rgba(255,0,64,0.08), rgba(193,0,50,0.06));border:1px solid rgba(255,0,64,0.06);color:#ff0040}
-.btn-danger:hover{ box-shadow:0 8px 30px rgba(255,0,64,0.06) }
-.status-panel{
-  padding:16px;border-radius:8px;background:rgba(0,0,0,0.3);border:1px solid rgba(0,255,127,0.05);
-  margin-bottom:16px
-}
-.status-text{color:var(--neon);font-weight:600;font-size:14px}
-.log-panel{
-  height:300px;overflow-y:auto;padding:16px;border-radius:8px;background:rgba(0,0,0,0.3);border:1px solid rgba(0,255,127,0.05);
-  font-size:13px;line-height:1.5
-}
-.log-entry{
-  margin-bottom:8px;padding:8px 12px;border-radius:6px;background:rgba(0,0,0,0.2)
-}
-.log-success{color:var(--neon);border-left:3px solid var(--neon)}
-.log-error{color:#ff4d6d;border-left:3px solid #ff4d6d}
-.log-info{color:var(--muted);border-left:3px solid var(--muted)}
-.api-counter{
-  text-align:center;padding:10px;border-radius:8px;background:rgba(0,0,0,0.2);border:1px solid rgba(0,255,127,0.05);
-  color:var(--neon-2);font-size:14px;margin-bottom:16px
-}
-.toolsGrid{display:grid;gap:12px;grid-template-columns: 1fr 1fr;}
-.back-btn{
-  display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:8px;
-  background:rgba(0,0,0,0.2);border:1px solid rgba(0,255,127,0.1);color:var(--muted);
-  text-decoration:none;font-size:13px;transition:all 0.2s;margin-bottom:16px;width:fit-content;
-}
-.back-btn:hover{ color:var(--neon); border-color:var(--neon) }
-.foot{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
-.info{font-size:12px;color:var(--muted)}
-.trademarkWrap{position:fixed;right:18px;bottom:10px;z-index:9999;display:flex;align-items:center;gap:8px;pointer-events:auto}
-.trademark{font-size:12px;color:var(--muted);opacity:0.95}
-.dotDecor{
-  width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
-  background:transparent;color:var(--muted);font-size:12px;border:1px solid rgba(255,255,255,0.02);padding-bottom:1px;
-}
-@media (max-width:500px){
-  .btn{padding:12px}
-  .title{font-size:18px}
-  .toolsGrid{grid-template-columns: 1fr;}
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS Bomber</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #0d0d0d 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: rgba(25, 25, 35, 0.95);
+            border-radius: 16px;
+            padding: 40px 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 500px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h2 {
+            font-size: 28px;
+            font-weight: 600;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #e0e0e0;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #333344;
+            border-radius: 10px;
+            background: #1a1a2e;
+            color: #ffffff;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            background: #1e1e3a;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin: 25px 0;
+        }
+        
+        button {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(45deg, #e55656, #d4541f);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #333344;
+            color: #ffffff;
+        }
+        
+        .btn-secondary:hover {
+            background: #444455;
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .status-message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .status-success {
+            background: rgba(40, 167, 69, 0.2);
+            border: 1px solid rgba(40, 167, 69, 0.5);
+            color: #28a745;
+        }
+        
+        .status-error {
+            background: rgba(220, 53, 69, 0.2);
+            border: 1px solid rgba(220, 53, 69, 0.5);
+            color: #dc3545;
+        }
+        
+        .status-info {
+            background: rgba(23, 162, 184, 0.2);
+            border: 1px solid rgba(23, 162, 184, 0.5);
+            color: #17a2b8;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #333344;
+            border-radius: 3px;
+            margin: 15px 0;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        
+        .logs {
+            background: #1a1a2e;
+            border: 1px solid #333344;
+            border-radius: 10px;
+            padding: 16px;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 13px;
+            font-family: monospace;
+            display: none;
+        }
+        
+        .log-entry {
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #333344;
+            color: #28a745;
+        }
+        
+        .log-entry.error {
+            color: #dc3545;
+        }
+        
+        .log-entry:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .warning {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+            color: #ffc107;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-  <div class="card" role="main" aria-live="polite">
-    <a href="/tools.html" class="back-btn">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-        <path d="M11.5 14.5L4 8l7.5-6.5"/>
-      </svg>
-      BACK TO TOOLS
-    </a>
-    
-    <div class="header">
-      <div>
-        <div class="title">MR WEIRDO — OTP BOMBER</div>
-        <div class="subtitle">SEND MULTIPLE OTP REQUESTS</div>
-      </div>
-      <div class="subtitle">v1.0</div>
+    <div class="container">
+        <div class="header">
+            <h2>💣 SMS Bomber</h2>
+            <p>Use responsibly for testing purposes only</p>
+        </div>
+
+        <div class="warning">
+            ⚠️ For educational and testing purposes only. Do not misuse.
+        </div>
+
+        <div class="input-group">
+            <label for="number">Phone Number (with country code)</label>
+            <input type="text" id="number" placeholder="+919876543210" required>
+        </div>
+
+        <div class="input-group">
+            <label for="count">Number of Messages</label>
+            <input type="number" id="count" placeholder="10" min="1" max="100" value="10" required>
+        </div>
+
+        <div class="input-group">
+            <label for="delay">Delay between messages (seconds)</label>
+            <input type="number" id="delay" placeholder="2" min="1" max="10" value="2" required>
+        </div>
+
+        <div class="button-group">
+            <button type="button" class="btn-primary" onclick="startBomber()" id="startBtn">Start Bombing</button>
+            <button type="button" class="btn-secondary" onclick="stopBomber()" id="stopBtn" disabled>Stop</button>
+        </div>
+
+        <div id="statusMessage" class="status-message"></div>
+
+        <div class="progress-bar" id="progressBar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="logs" id="logsContainer">
+            <div id="logsContent"></div>
+        </div>
     </div>
 
-    <div class="api-counter" id="apiCounter">
-      READY TO USE <span id="apiCount">13</span> APIS
-    </div>
+    <script>
+        let isBombing = false;
+        let bombingInterval;
 
-    <div class="form-group">
-      <label class="form-label" for="phoneNumber">PHONE NUMBER</label>
-      <input 
-        type="tel" 
-        id="phoneNumber" 
-        class="form-input"
-        placeholder="ENTER 10-DIGIT NUMBER (E.G. 9876543210)" 
-        maxlength="10"
-        pattern="[0-9]{10}"
-      >
-    </div>
+        function showStatus(message, type = 'info') {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = message;
+            statusEl.className = `status-message status-${type}`;
+            statusEl.style.display = 'block';
+        }
 
-    <div class="form-group">
-      <label class="form-label" for="ipAddress">IP ADDRESS (OPTIONAL)</label>
-      <input 
-        type="text" 
-        id="ipAddress" 
-        class="form-input"
-        placeholder="ENTER IP ADDRESS (DEFAULT: 192.168.1.1)"
-        value="192.168.1.1"
-      >
-    </div>
+        function hideStatus() {
+            document.getElementById('statusMessage').style.display = 'none';
+        }
 
-    <div class="toolsGrid">
-      <button type="button" class="btn" id="startBtn">
-        START OTP BOMBER
-      </button>
-      <button type="button" class="btn btn-danger" id="stopBtn" style="display:none">
-        STOP BOMBER
-      </button>
-    </div>
+        function addLog(message, isError = false) {
+            const logsContent = document.getElementById('logsContent');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${isError ? 'error' : ''}`;
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logsContent.appendChild(logEntry);
+            document.getElementById('logsContainer').style.display = 'block';
+            logsContent.scrollTop = logsContent.scrollHeight;
+        }
 
-    <div class="status-panel" id="statusPanel" style="display:none">
-      <div class="status-text" id="statusText">READY</div>
-    </div>
+        function updateProgress(percent) {
+            document.getElementById('progressBar').style.display = 'block';
+            document.getElementById('progressFill').style.width = percent + '%';
+        }
 
-    <div class="log-panel" id="logPanel">
-      <div class="log-entry log-info">LOG WILL APPEAR HERE...</div>
-    </div>
+        async function sendBombRequest(phone, current, total) {
+            try {
+                // Using the bomb API type from your ngrok API
+                const response = await fetch('/api/proxy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        type: 'bomb',
+                        term: phone
+                    })
+                });
 
-    <div class="foot">
-      <div class="info">USE RESPONSIBLY</div>
-      <div class="info">MR WEIRDO</div>
-    </div>
-  </div>
-</div>
+                const data = await response.json();
 
-<div class="trademarkWrap">
-  <div class="trademark">Copyright reserved 2025 MR WEIRDO ©</div>
-  <div class="dotDecor">•</div>
-</div>
+                if (data.success) {
+                    addLog(`✅ Message ${current}/${total} sent successfully`);
+                    return true;
+                } else {
+                    addLog(`❌ Failed to send message ${current}/${total}: ${data.error}`, true);
+                    return false;
+                }
+            } catch (error) {
+                addLog(`❌ Error sending message ${current}/${total}: ${error.message}`, true);
+                return false;
+            }
+        }
 
-<script>
-class OTPBomber {
-  constructor() {
-    this.isRunning = false;
-    this.controller = null;
-    this.startBtn = document.getElementById('startBtn');
-    this.stopBtn = document.getElementById('stopBtn');
-    this.statusPanel = document.getElementById('statusPanel');
-    this.statusText = document.getElementById('statusText');
-    this.logPanel = document.getElementById('logPanel');
-    this.apiCounter = document.getElementById('apiCounter');
-    this.apiCount = document.getElementById('apiCount');
-    
-    this.bindEvents();
-  }
+        async function startBomber() {
+            const number = document.getElementById('number').value.trim();
+            const count = parseInt(document.getElementById('count').value);
+            const delay = parseInt(document.getElementById('delay').value) * 1000; // Convert to milliseconds
 
-  bindEvents() {
-    this.startBtn.addEventListener('click', () => this.start());
-    this.stopBtn.addEventListener('click', () => this.stop());
-    
-    document.getElementById('phoneNumber').addEventListener('input', (e) => {
-      e.target.value = e.target.value.replace(/[^0-9]/g, '').slice(0, 10);
-    });
-  }
+            if (!number) {
+                showStatus('Please enter a phone number', 'error');
+                return;
+            }
 
-  async start() {
-    const phoneNumber = document.getElementById('phoneNumber').value;
-    const ipAddress = document.getElementById('ipAddress').value || '192.168.1.1';
+            if (!number.startsWith('+')) {
+                showStatus('Phone number must start with country code (e.g., +91)', 'error');
+                return;
+            }
 
-    if (!phoneNumber || phoneNumber.length !== 10) {
-      this.addLog('PLEASE ENTER A VALID 10-DIGIT PHONE NUMBER', 'error');
-      return;
-    }
+            if (count < 1 || count > 100) {
+                showStatus('Message count must be between 1 and 100', 'error');
+                return;
+            }
 
-    this.isRunning = true;
-    this.controller = new AbortController();
-    
-    this.startBtn.style.display = 'none';
-    this.stopBtn.style.display = 'flex';
-    this.statusPanel.style.display = 'block';
-    
-    this.updateStatus('STARTING OTP BOMBER...');
-    this.clearLog();
-    this.addLog('STARTING OTP BOMBER FOR: ' + phoneNumber, 'info');
+            // Reset UI
+            document.getElementById('logsContent').innerHTML = '';
+            updateProgress(0);
+            addLog('🚀 Starting SMS bomber...');
+            addLog(`📱 Target: ${number}`);
+            addLog(`🔢 Messages: ${count}`);
+            addLog(`⏱️ Delay: ${delay/1000}s`);
 
-    try {
-      await this.sendRequests(phoneNumber, ipAddress);
-    } catch (error) {
-      if (error.name !== 'AbortError') {
-        this.addLog('ERROR: ' + error.message, 'error');
-      }
-    }
-  }
+            // Update button states
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('stopBtn').disabled = false;
+            isBombing = true;
 
-  stop() {
-    this.isRunning = false;
-    if (this.controller) {
-      this.controller.abort();
-    }
-    
-    this.startBtn.style.display = 'flex';
-    this.stopBtn.style.display = 'none';
-    this.updateStatus('STOPPED BY USER');
-    this.addLog('BOMBER STOPPED BY USER', 'info');
-  }
+            showStatus('Bombing started...', 'info');
 
-  async sendRequests(phoneNumber, ipAddress) {
-    let requestCount = 0;
-    
-    while (this.isRunning && requestCount < 50) { // Safety limit
-      try {
-        requestCount++;
-        const response = await fetch('/api/bomber', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            phoneNumber,
-            ipAddress
-          }),
-          signal: this.controller.signal
+            let sentCount = 0;
+            let failedCount = 0;
+
+            // Start bombing process
+            bombingInterval = setInterval(async () => {
+                if (!isBombing) {
+                    clearInterval(bombingInterval);
+                    return;
+                }
+
+                const currentMessage = sentCount + 1;
+                const success = await sendBombRequest(number, currentMessage, count);
+
+                if (success) {
+                    sentCount++;
+                } else {
+                    failedCount++;
+                }
+
+                // Update progress
+                const progress = ((sentCount + failedCount) / count) * 100;
+                updateProgress(progress);
+
+                // Check if completed
+                if ((sentCount + failedCount) >= count) {
+                    clearInterval(bombingInterval);
+                    addLog(`🎉 Bombing completed! Sent: ${sentCount}, Failed: ${failedCount}`);
+                    showStatus(`Bombing completed! ${sentCount} messages sent.`, 'success');
+                    stopBomber();
+                }
+            }, delay);
+
+            // Add initial immediate request
+            const success = await sendBombRequest(number, 1, count);
+            if (success) {
+                sentCount++;
+            } else {
+                failedCount++;
+            }
+            updateProgress(((sentCount + failedCount) / count) * 100);
+        }
+
+        function stopBomber() {
+            isBombing = false;
+            if (bombingInterval) {
+                clearInterval(bombingInterval);
+            }
+
+            // Update UI
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            addLog('🛑 Bombing stopped by user');
+            showStatus('Bombing stopped', 'info');
+        }
+
+        // Enter key support
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' && !isBombing) {
+                startBomber();
+            }
         });
 
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
+        // Input validation
+        document.getElementById('count').addEventListener('input', function() {
+            if (this.value > 100) this.value = 100;
+            if (this.value < 1) this.value = 1;
+        });
 
-        const data = await response.json();
-        
-        if (data.success) {
-          this.updateStatus(`RUNNING - REQUEST ${requestCount} - ${data.activeAPIs} APIS ACTIVE`);
-          this.apiCount.textContent = data.activeAPIs;
-          
-          data.results.forEach(result => {
-            if (result.status === 200 || result.status === 201) {
-              this.addLog(`✓ ${this.shortenUrl(result.endpoint)} - STATUS: ${result.status}`, 'success');
-            } else if (result.status) {
-              this.addLog(`✗ ${this.shortenUrl(result.endpoint)} - STATUS: ${result.status}`, 'error');
-            } else {
-              this.addLog(`✗ ${this.shortenUrl(result.endpoint)} - ERROR: ${result.error}`, 'error');
+        // Auto-format phone number
+        document.getElementById('number').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value && !e.target.value.startsWith('+')) {
+                e.target.value = '+' + value;
             }
-          });
-        } else {
-          this.addLog('BACKEND ERROR: ' + data.error, 'error');
-        }
-
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
-      } catch (error) {
-        if (error.name === 'AbortError') {
-          this.addLog('REQUEST CANCELLED', 'info');
-          break;
-        }
-        this.addLog('NETWORK ERROR: ' + error.message, 'error');
-        await new Promise(resolve => setTimeout(resolve, 3000));
-      }
-    }
-    
-    if (requestCount >= 50) {
-      this.addLog('SAFETY LIMIT REACHED (50 REQUESTS)', 'info');
-      this.stop();
-    }
-  }
-
-  shortenUrl(url) {
-    try {
-      const domain = new URL(url).hostname;
-      return domain.replace('www.', '');
-    } catch {
-      return url.length > 30 ? url.substring(0, 30) + '...' : url;
-    }
-  }
-
-  updateStatus(text) {
-    this.statusText.textContent = text;
-  }
-
-  addLog(message, type = 'info') {
-    const logEntry = document.createElement('div');
-    logEntry.className = `log-entry log-${type}`;
-    
-    const timestamp = new Date().toLocaleTimeString();
-    logEntry.textContent = `[${timestamp}] ${message}`;
-    
-    this.logPanel.appendChild(logEntry);
-    this.logPanel.scrollTop = this.logPanel.scrollHeight;
-  }
-
-  clearLog() {
-    this.logPanel.innerHTML = '';
-  }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  new OTPBomber();
-});
-</script>
+        });
+    </script>
 </body>
 </html>
