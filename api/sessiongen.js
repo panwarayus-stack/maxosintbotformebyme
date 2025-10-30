@@ -7,13 +7,20 @@ export default async function handler(req, res) {
     return res.status(405).json({ success: false, message: "Only POST method allowed" });
   }
 
-  const { step, apiId, apiHash, phone, otp } = req.body;
+  const { step, apiId, apiHash, phone, otp, phoneCodeHash } = req.body;
   
-  // Validate required fields
+  // Validate required fields based on step
   if (!step || !apiId || !apiHash || !phone) {
     return res.status(400).json({ 
       success: false, 
       message: "Missing required fields: step, apiId, apiHash, phone" 
+    });
+  }
+
+  if (step === "verify_otp" && (!otp || !phoneCodeHash)) {
+    return res.status(400).json({ 
+      success: false, 
+      message: "Missing required fields for verification: otp, phoneCodeHash" 
     });
   }
 
@@ -22,72 +29,85 @@ export default async function handler(req, res) {
   // Create Python script if it doesn't exist
   if (!fs.existsSync(scriptPath)) {
     const pythonScript = `
+import asyncio
 from telethon.sync import TelegramClient
 from telethon.errors import SessionPasswordNeededError, PhoneCodeInvalidError, PhoneCodeExpiredError
-import sys, json
+import sys, json, os
 
-try:
-    data = json.loads(sys.stdin.read())
-    step = data.get("step")
-    api_id = int(data.get("apiId"))
-    api_hash = data.get("apiHash")
-    phone = data.get("phone")
-    otp = data.get("otp")
+async def main():
+    try:
+        data = json.loads(sys.stdin.read())
+        step = data.get("step")
+        api_id = int(data.get("apiId"))
+        api_hash = data.get("apiHash")
+        phone = data.get("phone")
+        otp = data.get("otp")
+        phone_code_hash = data.get("phoneCodeHash")
 
-    if step == "send_code":
-        client = TelegramClient("temp_session", api_id, api_hash)
-        await client.connect()
-        result = await client.send_code_request(phone)
-        print(json.dumps({
-            "success": True, 
-            "message": "Verification code sent to your Telegram!",
-            "phone_code_hash": result.phone_code_hash
-        }))
-        await client.disconnect()
-
-    elif step == "verify_otp":
-        client = TelegramClient("temp_session", api_id, api_hash)
-        await client.connect()
-        
-        try:
-            # Sign in with the code
-            await client.sign_in(phone, otp)
-            session_string = await client.session.save()
-            
+        if step == "send_code":
+            client = TelegramClient("temp_session", api_id, api_hash)
+            await client.connect()
+            result = await client.send_code_request(phone)
             print(json.dumps({
                 "success": True, 
-                "session_string": session_string,
-                "message": "Session generated successfully!"
+                "message": "Verification code sent to your Telegram!",
+                "phone_code_hash": result.phone_code_hash
             }))
-            
-        except SessionPasswordNeededError:
-            print(json.dumps({
-                "success": False,
-                "message": "2FA password required. Please disable 2FA or use another account."
-            }))
-        except PhoneCodeInvalidError:
-            print(json.dumps({
-                "success": False,
-                "message": "Invalid verification code. Please try again."
-            }))
-        except PhoneCodeExpiredError:
-            print(json.dumps({
-                "success": False,
-                "message": "Verification code expired. Please request a new code."
-            }))
-        except Exception as e:
-            print(json.dumps({
-                "success": False,
-                "message": f"Error during verification: {str(e)}"
-            }))
-        
-        await client.disconnect()
+            await client.disconnect()
 
-except Exception as e:
-    print(json.dumps({
-        "success": False,
-        "message": f"Unexpected error: {str(e)}"
-    }))
+        elif step == "verify_otp":
+            client = TelegramClient("temp_session", api_id, api_hash)
+            await client.connect()
+            
+            try:
+                # Sign in with the code
+                await client.sign_in(phone=phone, code=otp, phone_code_hash=phone_code_hash)
+                session_string = await client.session.save()
+                
+                print(json.dumps({
+                    "success": True, 
+                    "session_string": session_string,
+                    "message": "Session generated successfully!"
+                }))
+                
+            except SessionPasswordNeededError:
+                print(json.dumps({
+                    "success": False,
+                    "message": "2FA password required. Please disable 2FA or use another account."
+                }))
+            except PhoneCodeInvalidError:
+                print(json.dumps({
+                    "success": False,
+                    "message": "Invalid verification code. Please try again."
+                }))
+            except PhoneCodeExpiredError:
+                print(json.dumps({
+                    "success": False,
+                    "message": "Verification code expired. Please request a new code."
+                }))
+            except Exception as e:
+                print(json.dumps({
+                    "success": False,
+                    "message": f"Error during verification: {str(e)}"
+                }))
+            
+            await client.disconnect()
+            
+            # Clean up session file
+            try:
+                if os.path.exists("temp_session.session"):
+                    os.remove("temp_session.session")
+            except:
+                pass
+
+    except Exception as e:
+        print(json.dumps({
+            "success": False,
+            "message": f"Unexpected error: {str(e)}"
+        }))
+
+if __name__ == "__main__":
+    asyncio.run(main())
 `;
     fs.writeFileSync(scriptPath, pythonScript.trim());
   }
@@ -97,7 +117,7 @@ except Exception as e:
     let output = "";
     let errorOutput = "";
 
-    py.stdin.write(JSON.stringify({ step, apiId, apiHash, phone, otp }));
+    py.stdin.write(JSON.stringify({ step, apiId, apiHash, phone, otp, phoneCodeHash }));
     py.stdin.end();
 
     py.stdout.on("data", (data) => {
@@ -145,12 +165,14 @@ except Exception as e:
 
     // Timeout after 30 seconds
     setTimeout(() => {
-      py.kill();
-      res.status(500).json({
-        success: false,
-        message: "Session generation timeout"
-      });
-      resolve();
+      if (!res.headersSent) {
+        py.kill();
+        res.status(500).json({
+          success: false,
+          message: "Session generation timeout"
+        });
+        resolve();
+      }
     }, 30000);
   });
 }
