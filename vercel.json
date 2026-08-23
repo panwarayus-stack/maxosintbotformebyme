@@ -6,6 +6,7 @@
     { "src": "adhar.html", "use": "@vercel/static" },
     { "src": "upi.html", "use": "@vercel/static" },
     { "src": "vehicle.html", "use": "@vercel/static" },
+    { "src": "ads.txt", "use": "@vercel/static" },
     { "src": "imei.html", "use": "@vercel/static" },
     { "src": "pincode.html", "use": "@vercel/static" },
     { "src": "ip.html", "use": "@vercel/static" },
