@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const apiUrl = `https://allapiinone.vercel.app/?key=FOR_U&type=m&term=${number}`;
+    const apiUrl = `https://icmr-and-hitek-cy5k.onrender.com/search?mobile=${number}`;
     
     const response = await fetch(apiUrl);
     
