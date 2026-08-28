@@ -1,5 +1,10 @@
 {
   "version": 2,
+  "functions": {
+    "api/*.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
   "builds": [
     { "src": "index.html", "use": "@vercel/static" },
     { "src": "num.html", "use": "@vercel/static" },
@@ -20,7 +25,6 @@
     { "src": "api.html", "use": "@vercel/static" },
     { "src": "apifree.html", "use": "@vercel/static" },
     { "src": "emailspoof.html", "use": "@vercel/static" },
-
     { "src": "api/numdata.js", "use": "@vercel/node" },
     { "src": "api/adhardata.js", "use": "@vercel/node" },
     { "src": "api/upidata.js", "use": "@vercel/node" },
@@ -54,7 +58,6 @@
     { "src": "/api", "dest": "/api.html" },
     { "src": "/apifree", "dest": "/apifree.html" },
     { "src": "/emailspoof", "dest": "/emailspoof.html" },
-
     { "src": "/api/numdata", "dest": "/api/numdata.js" },
     { "src": "/api/adhardata", "dest": "/api/adhardata.js" },
     { "src": "/api/upidata", "dest": "/api/upidata.js" },
