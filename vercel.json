@@ -2,8 +2,12 @@
   "version": 2,
   "functions": {
     "api/*.js": {
-      "runtime": "nodejs18.x"
+      "runtime": "nodejs20.x"
     }
+  },
+  "env": {
+    "NODE_NO_WARNINGS": "1",
+    "NODE_OPTIONS": "--no-warnings"
   },
   "builds": [
     { "src": "index.html", "use": "@vercel/static" },
