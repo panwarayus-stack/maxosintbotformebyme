@@ -1,3 +1,6 @@
+// Add this at the VERY TOP to suppress all deprecation warnings
+process.noDeprecation = true;
+
 export default async function handler(req, res) {
   const number = req.query.number;
 
@@ -8,7 +11,6 @@ export default async function handler(req, res) {
   try {
     const apiUrl = `https://allapiinone.vercel.app/?key=FOR_U&type=m&term=${number}`;
     
-    // Use fetch - it works on Vercel's Node.js 18+ runtime
     const response = await fetch(apiUrl);
     
     if (!response.ok) {
@@ -21,7 +23,6 @@ export default async function handler(req, res) {
       return res.status(200).send("⚠️ No data found for this number");
     }
 
-    // Take first result only
     const item = data.results[0];
 
     const output = `
