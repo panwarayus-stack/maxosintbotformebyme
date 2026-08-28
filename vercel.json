@@ -2,7 +2,7 @@
   "version": 2,
   "functions": {
     "api/*.js": {
-      "runtime": "nodejs2.x"
+      "runtime": "nodejs24.x"
     }
   },
   "env": {
