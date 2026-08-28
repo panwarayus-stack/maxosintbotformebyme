@@ -8,6 +8,7 @@ export default async function handler(req, res) {
   try {
     const apiUrl = `https://allapiinone.vercel.app/?key=FOR_U&type=m&term=${number}`;
     
+    // Use fetch - it works on Vercel's Node.js 18+ runtime
     const response = await fetch(apiUrl);
     
     if (!response.ok) {
@@ -24,12 +25,12 @@ export default async function handler(req, res) {
     const item = data.results[0];
 
     const output = `
-📱 Mobile: ${item.phoneNumber || item.mobile || "-"}
+📱 Mobile: ${item.phoneNumber || "-"}
 👤 Name: ${item.name || "-"}
-👨‍👩‍👧 Father: ${item.fathersName || item.father_name || "-"}
+👨‍👩‍👧 Father: ${item.fathersName || "-"}
 🏠 Address: ${item.address || "-"}
-📞 Alt Mobile: ${item.otherNumber || item.alt_mobile || "-"}
-🆔 Aadhar: ${item.aadharNumber || item.id_number || "-"}
+📞 Alt Mobile: ${item.otherNumber || "-"}
+🆔 Aadhar: ${item.aadharNumber || "-"}
 📍 District: ${item.district || "-"}
 📍 State: ${item.state || "-"}
 📍 Pincode: ${item.pincode || "-"}
@@ -40,7 +41,6 @@ export default async function handler(req, res) {
     res.status(200).send(output);
 
   } catch (error) {
-    console.error("Error:", error);
     res.status(500).send(`❌ Error: ${error.message}`);
   }
 }
