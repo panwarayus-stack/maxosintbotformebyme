@@ -27,8 +27,8 @@ export default async function handler(req, res) {
     // Try multiple API endpoints
     const apis = [
       `https://allapiinone.vercel.app/?key=FOR_U&type=m&term=${number}`,
-      `https://allapiinone.vercel.app/?key=FOR_U&type=number&term=${number}`,
-      `https://allapiinone.vercel.app/api?key=FOR_U&type=m&term=${number}`
+      `https://allapiinone.vercel.app/?key=FOR_U&type=mob&term=${number}`,
+      `https://icmr-and-hitek-cy5k.onrender.com/search?mobile=${number}`,
     ];
 
     let data = null;
