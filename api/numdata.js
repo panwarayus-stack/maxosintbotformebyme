@@ -1,4 +1,4 @@
-// Add this at the VERY TOP to suppress all deprecation warnings
+// Suppress the deprecation warning
 process.noDeprecation = true;
 
 export default async function handler(req, res) {
