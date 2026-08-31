@@ -24,13 +24,13 @@ export default async function handler(req, res) {
       const item = data.result[0];
 
       const output = `
-📱 Mobile: ${item.mobile || "-"}
+📱 Mobile: ${item.phoneNumber || "-"}
 👤 Name: ${item.name || "-"}
-👨‍👩‍👧 Father: ${item.father_name || "-"}
+👨‍👩‍👧 Father: ${item.fathersName || "-"}
 🏠 Address: ${item.address || "-"}
-📞 Alt Mobile: ${item.alt_mobile || "-"}
+📞 Alt Mobile: ${item.otherNumber || "-"}
 📶 Circle/ISP: ${item.circle || "-"}
-🆔 Aadhar: ${item.id_number || "-"}
+🆔 Aadhar: ${item.aadharNumber || "-"}
 ✉️ Email: ${item.email || "-"}
       `.trim();
 
