@@ -1,4 +1,4 @@
-```js
+js
 export default async function handler(req, res) {
   const number = req.query.number;
 
