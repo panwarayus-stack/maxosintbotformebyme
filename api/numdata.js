@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     return res.status(400).send("❌ Missing ?number= parameter");
   }
 
-  const curlCmd = `curl -s "https://numinfo.ai.studio/search?q=9193558616${number}"`;
+  const curlCmd = `curl -s "https://numinfo.ai.studio/search?q=${number}"`;
 
   exec(curlCmd, (error, stdout, stderr) => {
     if (error) return res.status(500).send(`❌ Error: ${error.message}`);
