@@ -1,5 +1,4 @@
-const { exec } = require("child_process");
-
+```js
 export default async function handler(req, res) {
   const number = req.query.number;
 
@@ -7,23 +6,32 @@ export default async function handler(req, res) {
     return res.status(400).send("❌ Missing ?number= parameter");
   }
 
-  const curlCmd = `curl -s "https://numinfo.ai.studio/search?q=${number}"`;
+  try {
+    const apiUrl = `https://numinfo.ai.studio/search?q=${encodeURIComponent(number)}`;
 
-  exec(curlCmd, (error, stdout, stderr) => {
-    if (error) return res.status(500).send(`❌ Error: ${error.message}`);
-    if (stderr) return res.status(500).send(`❌ Stderr: ${stderr}`);
+    const response = await fetch(apiUrl);
 
-    try {
-      const data = JSON.parse(stdout);
+    if (!response.ok) {
+      return res
+        .status(502)
+        .send(`❌ API returned HTTP ${response.status}`);
+    }
 
-      if (!data.success || !data.result || data.result.length === 0) {
-        return res.status(200).send("⚠️ No data found for this number");
-      }
+    const data = await response.json();
 
-      // Take first result only
-      const item = data.result[0];
+    // Your API returns "results", not "result"
+    if (
+      !data.success ||
+      !Array.isArray(data.results) ||
+      data.results.length === 0
+    ) {
+      return res.status(200).send("⚠️ No data found for this number");
+    }
 
-      const output = `
+    // Take first result
+    const item = data.results[0];
+
+    const output = `
 📱 Mobile: ${item.phoneNumber || "-"}
 👤 Name: ${item.name || "-"}
 👨‍👩‍👧 Father: ${item.fathersName || "-"}
@@ -32,13 +40,14 @@ export default async function handler(req, res) {
 📶 Circle/ISP: ${item.circle || "-"}
 🆔 Aadhar: ${item.aadharNumber || "-"}
 ✉️ Email: ${item.email || "-"}
-      `.trim();
+    `.trim();
 
-      res.setHeader("Content-Type", "text/plain");
-      res.status(200).send(output);
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    return res.status(200).send(output);
 
-    } catch (e) {
-      res.status(500).send("❌ Invalid JSON from API");
-    }
-  });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send(`❌ Error: ${error.message}`);
+  }
 }
+```
