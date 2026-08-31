@@ -26,7 +26,7 @@ export default async function handler(req, res) {
   try {
     // Try multiple API endpoints
     const apis = [
-      `https://allapiinone.vercel.app/?key=FOR_U&type=m&term=${number}`,
+      `https://numinfo.ai.studio/search?q=${number}`,
       `https://icmr-and-hitek-cy5k.onrender.com/search?mobile=${number}`,
     ];
 
